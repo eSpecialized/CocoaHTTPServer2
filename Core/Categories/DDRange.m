@@ -39,7 +39,7 @@ DDRange DDRangeFromString(NSString *aString)
 	NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@"+0123456789"];
 	
 	NSScanner *scanner = [NSScanner scannerWithString:aString];
-	[scanner setCharactersToBeSkipped:[cset invertedSet]];
+	scanner.charactersToBeSkipped = cset.invertedSet;
 	
 	NSString *str1 = nil;
 	NSString *str2 = nil;

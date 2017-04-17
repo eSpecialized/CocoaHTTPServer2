@@ -12,7 +12,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_OFF; // | HTTP_LOG_FLAG_TRACE;
 
 @implementation HTTPRedirectResponse
 
-- (id)initWithPath:(NSString *)path
+- (instancetype)initWithPath:(NSString *)path
 {
 	if ((self = [super init]))
 	{
@@ -54,7 +54,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_OFF; // | HTTP_LOG_FLAG_TRACE;
 {
 	HTTPLogTrace();
 	
-	return [NSDictionary dictionaryWithObject:redirectPath forKey:@"Location"];
+	return @{@"Location": redirectPath};
 }
 
 - (NSInteger)status

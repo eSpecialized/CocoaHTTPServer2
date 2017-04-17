@@ -7,14 +7,13 @@
  * Returns the length of the data in bytes.
  * If you don't know the length in advance, implement the isChunked method and have it return YES.
 **/
-- (UInt64)contentLength;
+@property (NS_NONATOMIC_IOSONLY, readonly) UInt64 contentLength;
 
 /**
  * The HTTP server supports range requests in order to allow things like
  * file download resumption and optimized streaming on mobile devices.
 **/
-- (UInt64)offset;
-- (void)setOffset:(UInt64)offset;
+@property (NS_NONATOMIC_IOSONLY) UInt64 offset;
 
 /**
  * Returns the data for the response.
@@ -31,7 +30,7 @@
  * Should only return YES after the HTTPConnection has read all available data.
  * That is, all data for the response has been returned to the HTTPConnection via the readDataOfLength method.
 **/
-- (BOOL)isDone;
+@property (NS_NONATOMIC_IOSONLY, getter=isDone, readonly) BOOL done;
 
 @optional
 
@@ -53,19 +52,19 @@
  * 
  * Important: You should read the discussion at the bottom of this header.
 **/
-- (BOOL)delayResponseHeaders;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL delayResponseHeaders;
 
 /**
  * Status code for response.
  * Allows for responses such as redirect (301), etc.
 **/
-- (NSInteger)status;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSInteger status;
 
 /**
  * If you want to add any extra HTTP headers to the response,
  * simply return them in a dictionary in this method.
 **/
-- (NSDictionary *)httpHeaders;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *httpHeaders;
 
 /**
  * If you don't know the content-length in advance,
@@ -73,7 +72,7 @@
  * 
  * Important: You should read the discussion at the bottom of this header.
 **/
-- (BOOL)isChunked;
+@property (NS_NONATOMIC_IOSONLY, getter=isChunked, readonly) BOOL chunked;
 
 /**
  * This method is called from the HTTPConnection class when the connection is closed,

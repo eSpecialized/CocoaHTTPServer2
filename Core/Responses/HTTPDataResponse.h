@@ -8,6 +8,6 @@
 	NSData *data;
 }
 
-- (id)initWithData:(NSData *)data;
+- (instancetype)initWithData:(NSData *)data NS_DESIGNATED_INITIALIZER;
 
 @end

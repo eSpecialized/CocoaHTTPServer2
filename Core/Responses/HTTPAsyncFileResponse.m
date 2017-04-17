@@ -34,7 +34,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 
 @implementation HTTPAsyncFileResponse
 
-- (id)initWithFilePath:(NSString *)fpath forConnection:(HTTPConnection *)parent
+- (instancetype)initWithFilePath:(NSString *)fpath forConnection:(HTTPConnection *)parent
 {
 	if ((self = [super init]))
 	{
@@ -59,7 +59,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 			return nil;
 		}
 		
-		fileLength = (UInt64)[[fileAttributes objectForKey:NSFileSize] unsignedLongLongValue];
+		fileLength = (UInt64)[fileAttributes[NSFileSize] unsignedLongLongValue];
 		fileOffset = 0;
 		
 		aborted = NO;
@@ -139,7 +139,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 {
 	HTTPLogTrace();
 	
-	fileFD = open([filePath UTF8String], (O_RDONLY | O_NONBLOCK));
+	fileFD = open(filePath.UTF8String, (O_RDONLY | O_NONBLOCK));
 	if (fileFD == NULL_FD)
 	{
 		HTTPLogError(@"%@: Unable to open file. filePath: %@", THIS_FILE, filePath);
@@ -317,7 +317,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 	
 	if (data)
 	{
-		NSUInteger dataLength = [data length];
+		NSUInteger dataLength = data.length;
 		
 		HTTPLogVerbose(@"%@[%p]: Returning data of length %lu", THIS_FILE, self, (unsigned long)dataLength);
 		

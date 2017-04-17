@@ -24,8 +24,8 @@
 	dispatch_queue_t queue;
 }
 
-- (id)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot;
-- (id)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot queue:(dispatch_queue_t)q;
+- (instancetype)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot queue:(dispatch_queue_t)q NS_DESIGNATED_INITIALIZER;
 
 #if __has_feature(objc_arc_weak)
 @property (nonatomic, weak, readonly) HTTPServer *server;
@@ -73,7 +73,7 @@
 	NSMutableArray *responseDataSizes;
 }
 
-- (id)initWithAsyncSocket:(GCDAsyncSocket *)newSocket configuration:(HTTPConfig *)aConfig;
+- (instancetype)initWithAsyncSocket:(GCDAsyncSocket *)newSocket configuration:(HTTPConfig *)aConfig NS_DESIGNATED_INITIALIZER;
 
 - (void)start;
 - (void)stop;
@@ -83,20 +83,20 @@
 - (BOOL)supportsMethod:(NSString *)method atPath:(NSString *)path;
 - (BOOL)expectsRequestBodyFromMethod:(NSString *)method atPath:(NSString *)path;
 
-- (BOOL)isSecureServer;
-- (NSArray *)sslIdentityAndCertificates;
+@property (NS_NONATOMIC_IOSONLY, getter=isSecureServer, readonly) BOOL secureServer;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sslIdentityAndCertificates;
 
 - (BOOL)isPasswordProtected:(NSString *)path;
-- (BOOL)useDigestAccessAuthentication;
-- (NSString *)realm;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL useDigestAccessAuthentication;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *realm;
 - (NSString *)passwordForUser:(NSString *)username;
 
 - (NSDictionary *)parseParams:(NSString *)query;
-- (NSDictionary *)parseGetParams;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *parseGetParams;
 
-- (NSString *)requestURI;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *requestURI;
 
-- (NSArray *)directoryIndexFileNames;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *directoryIndexFileNames;
 - (NSString *)filePathForURI:(NSString *)path;
 - (NSString *)filePathForURI:(NSString *)path allowDirectory:(BOOL)allowDirectory;
 - (NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)path;
@@ -117,7 +117,7 @@
 
 - (void)finishResponse;
 
-- (BOOL)shouldDie;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldDie;
 - (void)die;
 
 @end

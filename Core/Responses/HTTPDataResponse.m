@@ -12,7 +12,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_OFF; // | HTTP_LOG_FLAG_TRACE;
 
 @implementation HTTPDataResponse
 
-- (id)initWithData:(NSData *)dataParam
+- (instancetype)initWithData:(NSData *)dataParam
 {
 	if((self = [super init]))
 	{
@@ -32,7 +32,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_OFF; // | HTTP_LOG_FLAG_TRACE;
 
 - (UInt64)contentLength
 {
-	UInt64 result = (UInt64)[data length];
+	UInt64 result = (UInt64)data.length;
 	
 	HTTPLogTrace2(@"%@[%p]: contentLength - %llu", THIS_FILE, self, result);
 	
@@ -57,10 +57,10 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_OFF; // | HTTP_LOG_FLAG_TRACE;
 {
 	HTTPLogTrace2(@"%@[%p]: readDataOfLength:%lu", THIS_FILE, self, (unsigned long)lengthParameter);
 	
-	NSUInteger remaining = [data length] - offset;
+	NSUInteger remaining = data.length - offset;
 	NSUInteger length = lengthParameter < remaining ? lengthParameter : remaining;
 	
-	void *bytes = (void *)([data bytes] + offset);
+	void *bytes = (void *)(data.bytes + offset);
 	
 	offset += length;
 	
@@ -69,7 +69,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_OFF; // | HTTP_LOG_FLAG_TRACE;
 
 - (BOOL)isDone
 {
-	BOOL result = (offset == [data length]);
+	BOOL result = (offset == data.length);
 	
 	HTTPLogTrace2(@"%@[%p]: isDone - %@", THIS_FILE, self, (result ? @"YES" : @"NO"));
 	

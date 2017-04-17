@@ -44,9 +44,9 @@
 	NSDictionary *replacementDict;
 }
 
-- (id)initWithFilePath:(NSString *)filePath
+- (instancetype)initWithFilePath:(NSString *)filePath
          forConnection:(HTTPConnection *)connection
              separator:(NSString *)separatorStr
- replacementDictionary:(NSDictionary *)dictionary;
+ replacementDictionary:(NSDictionary *)dictionary NS_DESIGNATED_INITIALIZER;
 
 @end

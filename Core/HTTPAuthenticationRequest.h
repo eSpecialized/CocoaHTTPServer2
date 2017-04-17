@@ -24,22 +24,22 @@
 	NSString *cnonce;
 	NSString *response;
 }
-- (id)initWithRequest:(HTTPMessage *)request;
+- (instancetype)initWithRequest:(HTTPMessage *)request NS_DESIGNATED_INITIALIZER;
 
-- (BOOL)isBasic;
-- (BOOL)isDigest;
+@property (NS_NONATOMIC_IOSONLY, getter=isBasic, readonly) BOOL basic;
+@property (NS_NONATOMIC_IOSONLY, getter=isDigest, readonly) BOOL digest;
 
 // Basic
-- (NSString *)base64Credentials;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *base64Credentials;
 
 // Digest
-- (NSString *)username;
-- (NSString *)realm;
-- (NSString *)nonce;
-- (NSString *)uri;
-- (NSString *)qop;
-- (NSString *)nc;
-- (NSString *)cnonce;
-- (NSString *)response;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *username;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *realm;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *nonce;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *uri;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *qop;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *nc;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *cnonce;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *response;
 
 @end

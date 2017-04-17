@@ -454,7 +454,7 @@ static unsigned int numProcessors;
 + (NSArray *)registeredClassNames
 {
 	NSArray *registeredClasses = [self registeredClasses];
-	NSMutableArray *result = [NSMutableArray arrayWithCapacity:[registeredClasses count]];
+	NSMutableArray *result = [NSMutableArray arrayWithCapacity:registeredClasses.count];
 	
 	for (Class class in registeredClasses)
 	{
@@ -525,7 +525,7 @@ static unsigned int numProcessors;
 		const char *loggerQueueName = NULL;
 		if ([logger respondsToSelector:@selector(loggerName)])
 		{
-			loggerQueueName = [[logger loggerName] UTF8String];
+			loggerQueueName = [logger loggerName].UTF8String;
 		}
 		
 		loggerQueue = dispatch_queue_create(loggerQueueName, NULL);
@@ -772,7 +772,7 @@ NSString *DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy)
 
 @implementation DDLoggerNode
 
-- (id)initWithLogger:(id <DDLogger>)aLogger loggerQueue:(dispatch_queue_t)aLoggerQueue
+- (instancetype)initWithLogger:(id <DDLogger>)aLogger loggerQueue:(dispatch_queue_t)aLoggerQueue
 {
 	if ((self = [super init]))
 	{
@@ -820,7 +820,7 @@ static char *dd_str_copy(const char *str)
 	return result;
 }
 
-- (id)initWithLogMsg:(NSString *)msg
+- (instancetype)initWithLogMsg:(NSString *)msg
                level:(int)level
                 flag:(int)flag
              context:(int)context
@@ -873,7 +873,7 @@ static char *dd_str_copy(const char *str)
 		
 		queueLabel = dd_str_copy(dispatch_queue_get_label(currentQueue));
 		
-		threadName = [[NSThread currentThread] name];
+		threadName = [NSThread currentThread].name;
 	}
 	return self;
 }
@@ -893,7 +893,7 @@ static char *dd_str_copy(const char *str)
 	if (function == NULL)
 		return nil;
 	else
-		return [[NSString alloc] initWithUTF8String:function];
+		return @(function);
 }
 
 - (void)dealloc
@@ -916,14 +916,14 @@ static char *dd_str_copy(const char *str)
 
 @implementation DDAbstractLogger
 
-- (id)init
+- (instancetype)init
 {
 	if ((self = [super init]))
 	{
 		const char *loggerQueueName = NULL;
 		if ([self respondsToSelector:@selector(loggerName)])
 		{
-			loggerQueueName = [[self loggerName] UTF8String];
+			loggerQueueName = [self loggerName].UTF8String;
 		}
 		
 		loggerQueue = dispatch_queue_create(loggerQueueName, NULL);

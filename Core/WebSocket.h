@@ -28,7 +28,7 @@
 
 + (BOOL)isWebSocketRequest:(HTTPMessage *)request;
 
-- (id)initWithRequest:(HTTPMessage *)request socket:(GCDAsyncSocket *)socket NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithRequest:(HTTPMessage *)request socket:(GCDAsyncSocket *)socket NS_DESIGNATED_INITIALIZER;
 
 /**
  * Delegate option.

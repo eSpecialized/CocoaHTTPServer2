@@ -49,7 +49,7 @@ NSInteger DDRangeCompare(DDRangePointer pDDRange1, DDRangePointer pDDRange2);
 @interface NSValue (NSValueDDRangeExtensions)
 
 + (NSValue *)valueWithDDRange:(DDRange)range;
-- (DDRange)ddrangeValue;
+@property (NS_NONATOMIC_IOSONLY, readonly) DDRange ddrangeValue;
 
 - (NSInteger)ddrangeCompare:(NSValue *)ddrangeValue;
 

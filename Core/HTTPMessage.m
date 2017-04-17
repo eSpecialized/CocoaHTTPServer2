@@ -11,7 +11,7 @@
     return message;
 }
 
-- (id)initEmptyRequest
+- (instancetype)initEmptyRequest
 {
 	if ((self = [super init]))
 	{
@@ -20,7 +20,7 @@
 	return self;
 }
 
-- (id)initRequestWithMethod:(NSString *)method URL:(NSURL *)url version:(NSString *)version
+- (instancetype)initRequestWithMethod:(NSString *)method URL:(NSURL *)url version:(NSString *)version
 {
 	if ((self = [super init]))
 	{
@@ -32,7 +32,7 @@
 	return self;
 }
 
-- (id)initResponseWithStatusCode:(NSInteger)code description:(NSString *)description version:(NSString *)version
+- (instancetype)initResponseWithStatusCode:(NSInteger)code description:(NSString *)description version:(NSString *)version
 {
 	if ((self = [super init]))
 	{
@@ -54,7 +54,7 @@
 
 - (BOOL)appendData:(NSData *)data
 {
-	return CFHTTPMessageAppendBytes(message, [data bytes], [data length]);
+	return CFHTTPMessageAppendBytes(message, data.bytes, data.length);
 }
 
 - (BOOL)isHeaderComplete

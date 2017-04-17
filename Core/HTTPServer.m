@@ -32,7 +32,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
  * Standard Constructor.
  * Instantiates an HTTP server, but does not start it.
 **/
-- (id)init
+- (instancetype)init
 {
 	if ((self = [super init]))
 	{
@@ -310,7 +310,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 		{
 			
 			dispatch_block_t bonjourBlock = ^{
-				result = [[netService name] copy];
+				result = [netService.name copy];
 			};
 			
 			[[self class] performBonjourBlock:bonjourBlock];
@@ -504,7 +504,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	NSUInteger result = 0;
 	
 	[connectionsLock lock];
-	result = [connections count];
+	result = connections.count;
 	[connectionsLock unlock];
 	
 	return result;
@@ -518,7 +518,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	NSUInteger result = 0;
 	
 	[webSocketsLock lock];
-	result = [webSockets count];
+	result = webSockets.count;
 	[webSocketsLock unlock];
 	
 	return result;
@@ -553,6 +553,14 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	[connectionsLock unlock];
 	
 	[newConnection start];
+    
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(httpserver:clientConnected:)])
+    {
+        [NSOperationQueue.mainQueue addOperationWithBlock:^{
+            [_delegate httpserver:self clientConnected:@""];
+        }];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -568,7 +576,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	if (type)
 	{
 		netService = [[NSNetService alloc] initWithDomain:domain type:type name:name port:[asyncSocket localPort]];
-		[netService setDelegate:self];
+		netService.delegate = self;
 		
 		NSNetService *theNetService = netService;
 		NSData *txtRecordData = nil;
@@ -641,6 +649,15 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	// Note: This method is invoked on our bonjour thread.
 	
 	HTTPLogInfo(@"Bonjour Service Published: domain(%@) type(%@) name(%@)", [ns domain], [ns type], [ns name]);
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(httpserver:serverDidPublish:)])
+    {
+        [NSOperationQueue.mainQueue addOperationWithBlock:^{
+            [_delegate httpserver:self serverDidPublish:ns];
+        }];
+        
+    }
+    
 }
 
 /**
@@ -655,6 +672,15 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	
 	HTTPLogWarn(@"Failed to Publish Service: domain(%@) type(%@) name(%@) - %@",
 	                                         [ns domain], [ns type], [ns name], errorDict);
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(httpserver:serverDidNotPublish:)])
+    {
+        
+        [NSOperationQueue.mainQueue addOperationWithBlock:^{
+            [_delegate httpserver:self serverDidNotPublish:errorDict];
+        }];
+
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -672,7 +698,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	[connectionsLock lock];
 	
 	HTTPLogTrace();
-	[connections removeObject:[notification object]];
+	[connections removeObject:notification.object];
 	
 	[connectionsLock unlock];
 }
@@ -688,7 +714,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	[webSocketsLock lock];
 	
 	HTTPLogTrace();
-	[webSockets removeObject:[notification object]];
+	[webSockets removeObject:notification.object];
 	
 	[webSocketsLock unlock];
 }
@@ -736,7 +762,7 @@ static NSThread *bonjourThread;
 		// So we'll just create a timer that will never fire - unless the server runs for 10,000 years.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
-		[NSTimer scheduledTimerWithTimeInterval:[[NSDate distantFuture] timeIntervalSinceNow]
+		[NSTimer scheduledTimerWithTimeInterval:[NSDate distantFuture].timeIntervalSinceNow
 		                                 target:self
 		                               selector:@selector(donothingatall:)
 		                               userInfo:nil

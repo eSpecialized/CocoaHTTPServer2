@@ -18,7 +18,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 
 @implementation HTTPFileResponse
 
-- (id)initWithFilePath:(NSString *)fpath forConnection:(HTTPConnection *)parent
+- (instancetype)initWithFilePath:(NSString *)fpath forConnection:(HTTPConnection *)parent
 {
 	if((self = [super init]))
 	{
@@ -43,7 +43,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 			return nil;
 		}
 		
-		fileLength = (UInt64)[[fileAttributes objectForKey:NSFileSize] unsignedLongLongValue];
+		fileLength = (UInt64)[fileAttributes[NSFileSize] unsignedLongLongValue];
 		fileOffset = 0;
 		
 		aborted = NO;
@@ -66,7 +66,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 {
 	HTTPLogTrace();
 	
-	fileFD = open([filePath UTF8String], O_RDONLY);
+	fileFD = open(filePath.UTF8String, O_RDONLY);
 	if (fileFD == NULL_FD)
 	{
 		HTTPLogError(@"%@[%p]: Unable to open file. filePath: %@", THIS_FILE, self, filePath);

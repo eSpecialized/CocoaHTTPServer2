@@ -2,13 +2,13 @@
 
 @interface NSData (DDData)
 
-- (NSData *)md5Digest;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *md5Digest;
 
-- (NSData *)sha1Digest;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *sha1Digest;
 
-- (NSString *)hexStringValue;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *hexStringValue;
 
-- (NSString *)base64Encoded;
-- (NSData *)base64Decoded;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *base64Encoded;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *base64Decoded;
 
 @end

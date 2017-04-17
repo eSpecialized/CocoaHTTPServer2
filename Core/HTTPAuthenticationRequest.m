@@ -13,20 +13,20 @@
 
 @implementation HTTPAuthenticationRequest
 
-- (id)initWithRequest:(HTTPMessage *)request
+- (instancetype)initWithRequest:(HTTPMessage *)request
 {
 	if ((self = [super init]))
 	{
 		NSString *authInfo = [request headerField:@"Authorization"];
 		
 		isBasic = NO;
-		if ([authInfo length] >= 6)
+		if (authInfo.length >= 6)
 		{
 			isBasic = [[authInfo substringToIndex:6] caseInsensitiveCompare:@"Basic "] == NSOrderedSame;
 		}
 		
 		isDigest = NO;
-		if ([authInfo length] >= 7)
+		if (authInfo.length >= 7)
 		{
 			isDigest = [[authInfo substringToIndex:7] caseInsensitiveCompare:@"Digest "] == NSOrderedSame;
 		}
@@ -134,7 +134,7 @@
 	}
 	
 	NSUInteger postStartRangeLocation = startRange.location + startRange.length;
-	NSUInteger postStartRangeLength = [header length] - postStartRangeLocation;
+	NSUInteger postStartRangeLength = header.length - postStartRangeLocation;
 	NSRange postStartRange = NSMakeRange(postStartRangeLocation, postStartRangeLength);
 	
 	NSRange endRange = [header rangeOfString:@"\"" options:0 range:postStartRange];
@@ -166,7 +166,7 @@
 	}
 	
 	NSUInteger postStartRangeLocation = startRange.location + startRange.length;
-	NSUInteger postStartRangeLength = [header length] - postStartRangeLocation;
+	NSUInteger postStartRangeLength = header.length - postStartRangeLocation;
 	NSRange postStartRange = NSMakeRange(postStartRangeLocation, postStartRangeLength);
 	
 	NSRange endRange = [header rangeOfString:@"," options:0 range:postStartRange];

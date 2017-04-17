@@ -34,8 +34,8 @@
 	BOOL readSourceSuspended;
 }
 
-- (id)initWithFilePath:(NSString *)filePath forConnection:(HTTPConnection *)connection;
-- (NSString *)filePath;
+- (instancetype)initWithFilePath:(NSString *)filePath forConnection:(HTTPConnection *)connection NS_DESIGNATED_INITIALIZER;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *filePath;
 
 @end
 

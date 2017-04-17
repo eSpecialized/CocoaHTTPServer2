@@ -15,7 +15,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 
 @implementation HTTPDynamicFileResponse
 
-- (id)initWithFilePath:(NSString *)fpath
+- (instancetype)initWithFilePath:(NSString *)fpath
          forConnection:(HTTPConnection *)parent
              separator:(NSString *)separatorStr
  replacementDictionary:(NSDictionary *)dict
@@ -72,7 +72,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 	// This method is in charge of updating the readBufferOffset.
 	
 	NSUInteger bufLen = readBufferOffset;
-	NSUInteger sepLen = [separator length];
+	NSUInteger sepLen = separator.length;
 	
 	// We're going to start looking for the separator at the beginning of the buffer,
 	// and stop when we get to the point where the separator would no longer fit in the buffer.
@@ -93,7 +93,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 	NSUInteger s1 = 0;
 	NSUInteger s2 = 0;
 	
-	const void *sep = [separator bytes];
+	const void *sep = separator.bytes;
 	
 	while (offset < stopOffset)
 	{
@@ -142,7 +142,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 				{
 					// Is there a given replacement for this key?
 					
-					id value = [replacementDict objectForKey:key];
+					id value = replacementDict[key];
 					if (value)
 					{
 						// Found the replacement value.
@@ -151,7 +151,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 						HTTPLogVerbose(@"%@[%p]: key(%@) -> value(%@)", THIS_FILE, self, key, value);
 						
 						NSData *v = [[value description] dataUsingEncoding:NSUTF8StringEncoding];
-						NSUInteger vLength = [v length];
+						NSUInteger vLength = v.length;
 						
 						if (fullRange.length == vLength)
 						{

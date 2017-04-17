@@ -111,19 +111,17 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * 
  * The delegate queue and socket queue can optionally be the same.
 **/
-- (id)init;
-- (id)initWithSocketQueue:(dispatch_queue_t)sq;
-- (id)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq;
-- (id)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq;
+- (instancetype)init;
+- (instancetype)initWithSocketQueue:(dispatch_queue_t)sq;
+- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq;
+- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq NS_DESIGNATED_INITIALIZER;
 
 #pragma mark Configuration
 
-- (id)delegate;
-- (void)setDelegate:(id)delegate;
+@property (NS_NONATOMIC_IOSONLY, assign) id delegate;
 - (void)synchronouslySetDelegate:(id)delegate;
 
-- (dispatch_queue_t)delegateQueue;
-- (void)setDelegateQueue:(dispatch_queue_t)delegateQueue;
+@property (NS_NONATOMIC_IOSONLY, assign) dispatch_queue_t delegateQueue;
 - (void)synchronouslySetDelegateQueue:(dispatch_queue_t)delegateQueue;
 
 - (void)getDelegate:(id *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr;
@@ -142,21 +140,18 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * If a DNS lookup returns both IPv4 and IPv6 results, the preferred protocol will be chosen.
  * By default, the preferred protocol is IPv4, but may be configured as desired.
 **/
-- (BOOL)isIPv4Enabled;
-- (void)setIPv4Enabled:(BOOL)flag;
+@property (NS_NONATOMIC_IOSONLY, getter=isIPv4Enabled) BOOL IPv4Enabled;
 
-- (BOOL)isIPv6Enabled;
-- (void)setIPv6Enabled:(BOOL)flag;
+@property (NS_NONATOMIC_IOSONLY, getter=isIPv6Enabled) BOOL IPv6Enabled;
 
-- (BOOL)isIPv4PreferredOverIPv6;
+@property (NS_NONATOMIC_IOSONLY, getter=isIPv4PreferredOverIPv6, readonly) BOOL IPv4PreferredOverIPv6;
 - (void)setPreferIPv4OverIPv6:(BOOL)flag;
 
 /**
  * User data allows you to associate arbitrary information with the socket.
  * This data is not used internally by socket in any way.
 **/
-- (id)userData;
-- (void)setUserData:(id)arbitraryUserData;
+@property (NS_NONATOMIC_IOSONLY, strong) id userData;
 
 #pragma mark Accepting
 
@@ -356,18 +351,18 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * 
  * If a socket is in the process of connecting, it may be neither disconnected nor connected.
 **/
-- (BOOL)isDisconnected;
-- (BOOL)isConnected;
+@property (NS_NONATOMIC_IOSONLY, getter=isDisconnected, readonly) BOOL disconnected;
+@property (NS_NONATOMIC_IOSONLY, getter=isConnected, readonly) BOOL connected;
 
 /**
  * Returns the local or remote host and port to which this socket is connected, or nil and 0 if not connected.
  * The host will be an IP address.
 **/
-- (NSString *)connectedHost;
-- (uint16_t)connectedPort;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *connectedHost;
+@property (NS_NONATOMIC_IOSONLY, readonly) uint16_t connectedPort;
 
-- (NSString *)localHost;
-- (uint16_t)localPort;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *localHost;
+@property (NS_NONATOMIC_IOSONLY, readonly) uint16_t localPort;
 
 /**
  * Returns the local or remote address to which this socket is connected,
@@ -375,22 +370,22 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * 
  * See also the connectedHost, connectedPort, localHost and localPort methods.
 **/
-- (NSData *)connectedAddress;
-- (NSData *)localAddress;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *connectedAddress;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *localAddress;
 
 /**
  * Returns whether the socket is IPv4 or IPv6.
  * An accepting socket may be both.
 **/
-- (BOOL)isIPv4;
-- (BOOL)isIPv6;
+@property (NS_NONATOMIC_IOSONLY, getter=isIPv4, readonly) BOOL IPv4;
+@property (NS_NONATOMIC_IOSONLY, getter=isIPv6, readonly) BOOL IPv6;
 
 /**
  * Returns whether or not the socket has been secured via SSL/TLS.
  * 
  * See also the startTLS method.
 **/
-- (BOOL)isSecure;
+@property (NS_NONATOMIC_IOSONLY, getter=isSecure, readonly) BOOL secure;
 
 #pragma mark Reading
 
@@ -743,8 +738,7 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * 
  * The default value is YES.
 **/
-- (BOOL)autoDisconnectOnClosedReadStream;
-- (void)setAutoDisconnectOnClosedReadStream:(BOOL)flag;
+@property (NS_NONATOMIC_IOSONLY) BOOL autoDisconnectOnClosedReadStream;
 
 /**
  * GCDAsyncSocket maintains thread safety by using an internal serial dispatch_queue.
@@ -859,9 +853,9 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * If the socket is a server socket (is accepting incoming connections),
  * it might actually have multiple internal socket file descriptors - one for IPv4 and one for IPv6.
 **/
-- (int)socketFD;
-- (int)socket4FD;
-- (int)socket6FD;
+@property (NS_NONATOMIC_IOSONLY, readonly) int socketFD;
+@property (NS_NONATOMIC_IOSONLY, readonly) int socket4FD;
+@property (NS_NONATOMIC_IOSONLY, readonly) int socket6FD;
 
 #if TARGET_OS_IPHONE
 
@@ -884,8 +878,8 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * 
  * See also: (BOOL)enableBackgroundingOnSocket
 **/
-- (CFReadStreamRef)readStream;
-- (CFWriteStreamRef)writeStream;
+@property (NS_NONATOMIC_IOSONLY, readonly) CFReadStreamRef readStream CF_RETURNS_NOT_RETAINED;
+@property (NS_NONATOMIC_IOSONLY, readonly) CFWriteStreamRef writeStream CF_RETURNS_NOT_RETAINED;
 
 /**
  * This method is only available from within the context of a performBlock: invocation.
@@ -912,7 +906,7 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  *     }];
  * }
 **/
-- (BOOL)enableBackgroundingOnSocket;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL enableBackgroundingOnSocket;
 
 #endif
 
@@ -924,7 +918,7 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
  * 
  * Provides access to the socket's SSLContext, if SSL/TLS has been started on the socket.
 **/
-- (SSLContextRef)sslContext;
+@property (NS_NONATOMIC_IOSONLY, readonly) SSLContextRef sslContext;
 
 #endif
 

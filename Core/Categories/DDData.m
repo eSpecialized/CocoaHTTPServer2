@@ -14,7 +14,7 @@ static char encodingTable[64] = {
 {
 	unsigned char result[CC_MD5_DIGEST_LENGTH];
     
-    CC_MD5([self bytes], (CC_LONG)[self length], result);
+    CC_MD5(self.bytes, (CC_LONG)self.length, result);
     return [NSData dataWithBytes:result length:CC_MD5_DIGEST_LENGTH];
 }
 
@@ -22,18 +22,18 @@ static char encodingTable[64] = {
 {
 	unsigned char result[CC_SHA1_DIGEST_LENGTH];
     
-	CC_SHA1([self bytes], (CC_LONG)[self length], result);
+	CC_SHA1(self.bytes, (CC_LONG)self.length, result);
     return [NSData dataWithBytes:result length:CC_SHA1_DIGEST_LENGTH];
 }
 
 - (NSString *)hexStringValue
 {
-	NSMutableString *stringBuffer = [NSMutableString stringWithCapacity:([self length] * 2)];
+	NSMutableString *stringBuffer = [NSMutableString stringWithCapacity:(self.length * 2)];
 	
-    const unsigned char *dataBuffer = [self bytes];
+    const unsigned char *dataBuffer = self.bytes;
     int i;
     
-    for (i = 0; i < [self length]; ++i)
+    for (i = 0; i < self.length; ++i)
 	{
         [stringBuffer appendFormat:@"%02x", (unsigned int)dataBuffer[i]];
 	}
@@ -43,10 +43,10 @@ static char encodingTable[64] = {
 
 - (NSString *)base64Encoded
 {
-	const unsigned char	*bytes = [self bytes];
-	NSMutableString *result = [NSMutableString stringWithCapacity:[self length]];
+	const unsigned char	*bytes = self.bytes;
+	NSMutableString *result = [NSMutableString stringWithCapacity:self.length];
 	unsigned long ixtext = 0;
-	unsigned long lentext = [self length];
+	unsigned long lentext = self.length;
 	long ctremaining = 0;
 	unsigned char inbuf[3], outbuf[4];
 	unsigned short i = 0;
@@ -95,11 +95,11 @@ static char encodingTable[64] = {
 
 - (NSData *)base64Decoded
 {
-	const unsigned char	*bytes = [self bytes];
-	NSMutableData *result = [NSMutableData dataWithCapacity:[self length]];
+	const unsigned char	*bytes = self.bytes;
+	NSMutableData *result = [NSMutableData dataWithCapacity:self.length];
 	
 	unsigned long ixtext = 0;
-	unsigned long lentext = [self length];
+	unsigned long lentext = self.length;
 	unsigned char ch = 0;
 	unsigned char inbuf[4] = {0, 0, 0, 0};
 	unsigned char outbuf[3] = {0, 0, 0};

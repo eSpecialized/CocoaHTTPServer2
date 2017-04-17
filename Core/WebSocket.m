@@ -165,7 +165,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
   return [self initWithRequest:nil socket:nil];
 }
 
-- (id)initWithRequest:(HTTPMessage *)aRequest socket:(GCDAsyncSocket *)socket
+- (instancetype)initWithRequest:(HTTPMessage *)aRequest socket:(GCDAsyncSocket *)socket
 {
 	HTTPLogTrace();
 	
@@ -314,7 +314,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	NSString *scheme = [asyncSocket isSecure] ? @"wss" : @"ws";
 	NSString *host = [request headerField:@"Host"];
 	
-	NSString *requestUri = [[request url] relativeString];
+	NSString *requestUri = [request url].relativeString;
 	
 	if (host == nil)
 	{
@@ -434,7 +434,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	
 	unichar c;
 	NSUInteger i;
-	NSUInteger length = [key length];
+	NSUInteger length = key.length;
 	
 	// Concatenate the digits into a string,
 	// and count the number of spaces.
@@ -456,7 +456,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 		}
 	}
 	
-	long long num = strtoll([numStr UTF8String], NULL, 10);
+	long long num = strtoll(numStr.UTF8String, NULL, 10);
 	
 	long long resultHostNum;
 	
@@ -591,7 +591,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	}
 	else
 	{
-		data = [NSMutableData dataWithCapacity:([msgData length] + 2)];
+		data = [NSMutableData dataWithCapacity:(msgData.length + 2)];
         
 		[data appendBytes:"\x00" length:1];
 		[data appendData:msgData];
@@ -709,7 +709,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	}
 	else if (tag == TAG_PREFIX)
 	{
-		UInt8 *pFrame = (UInt8 *)[data bytes];
+		UInt8 *pFrame = (UInt8 *)data.bytes;
 		UInt8 frame = *pFrame;
 		
 		if (frame <= 0x7F)
@@ -724,7 +724,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	}
 	else if (tag == TAG_PAYLOAD_PREFIX)
 	{
-		UInt8 *pFrame = (UInt8 *)[data bytes];
+		UInt8 *pFrame = (UInt8 *)data.bytes;
 		UInt8 frame = *pFrame;
 
 		if ([self isValidWebSocketFrame: frame])
@@ -752,7 +752,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	}
 	else if (tag == TAG_PAYLOAD_LENGTH)
 	{
-		UInt8 frame = *(UInt8 *)[data bytes];
+		UInt8 frame = *(UInt8 *)data.bytes;
 		BOOL masked = WS_PAYLOAD_IS_MASKED(frame);
 		NSUInteger length = WS_PAYLOAD_LENGTH(frame);
 		nextFrameMasked = masked;
@@ -776,7 +776,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	}
 	else if (tag == TAG_PAYLOAD_LENGTH16)
 	{
-		UInt8 *pFrame = (UInt8 *)[data bytes];
+		UInt8 *pFrame = (UInt8 *)data.bytes;
 		NSUInteger length = ((NSUInteger)pFrame[0] << 8) | (NSUInteger)pFrame[1];
 		if (nextFrameMasked) {
 			[asyncSocket readDataToLength:4 withTimeout:TIMEOUT_NONE tag:TAG_MSG_MASKING_KEY];
@@ -786,7 +786,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	else if (tag == TAG_PAYLOAD_LENGTH64)
 	{
 
-		UInt8 *pFrame = (UInt8 *)[data bytes];
+		UInt8 *pFrame = (UInt8 *)data.bytes;
 		NSUInteger length =
 		((NSUInteger)pFrame[7]) |
 		((NSUInteger)pFrame[6] << 8) |
@@ -807,7 +807,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	}
 	else if (tag == TAG_MSG_WITH_LENGTH)
 	{
-		NSUInteger msgLength = [data length];
+		NSUInteger msgLength = data.length;
 		if (nextFrameMasked && maskingKey) {
 			NSMutableData *masked = data.mutableCopy;
 			UInt8 *pData = (UInt8 *)masked.mutableBytes;
@@ -824,7 +824,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
                 [accumuData appendData:data];
             }
             else{
-                NSString *msg = [[NSString alloc] initWithBytes:[data bytes] length:msgLength encoding:NSUTF8StringEncoding];
+                NSString *msg = [[NSString alloc] initWithBytes:data.bytes length:msgLength encoding:NSUTF8StringEncoding];
                 [self didReceiveMessage:msg];
             }
 			
@@ -852,7 +852,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
             if(firstFrameOpCode == WS_OP_TEXT_FRAME){
                 if(finFlag){
                     //last frame of fragmented frames
-                    NSString *msg = [[NSString alloc] initWithBytes:[accumuData bytes] length:msgLength encoding:NSUTF8StringEncoding];
+                    NSString *msg = [[NSString alloc] initWithBytes:accumuData.bytes length:msgLength encoding:NSUTF8StringEncoding];
                     [self didReceiveMessage:msg];
                     accumuData = nil;
                 }
@@ -880,11 +880,11 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	}
 	else
 	{
-		NSUInteger msgLength = [data length] - 1; // Excluding ending 0xFF frame
+		NSUInteger msgLength = data.length - 1; // Excluding ending 0xFF frame
 
 		if (nextOpCode == WS_OP_TEXT_FRAME)
 		{
-			NSString *msg = [[NSString alloc] initWithBytes:[data bytes] length:msgLength encoding:NSUTF8StringEncoding];
+			NSString *msg = [[NSString alloc] initWithBytes:data.bytes length:msgLength encoding:NSUTF8StringEncoding];
 
 			[self didReceiveMessage:msg];
 		}

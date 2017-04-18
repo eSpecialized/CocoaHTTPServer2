@@ -5,6 +5,9 @@
       location = "group:Samples/README.markdown">
    </FileRef>
    <FileRef
+      location = "group:CocoaHTTPServer2.podspec.json">
+   </FileRef>
+   <FileRef
       location = "group:Samples/WebDAVServer/WebDAVServer.xcodeproj">
    </FileRef>
    <FileRef

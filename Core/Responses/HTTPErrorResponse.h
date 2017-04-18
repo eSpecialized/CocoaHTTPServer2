@@ -4,6 +4,6 @@
     NSInteger _status;
 }
 
-- (instancetype)initWithErrorCode:(int)httpErrorCode NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithErrorCode:(int)httpErrorCode ;
 
 @end

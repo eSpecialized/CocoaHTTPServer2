@@ -13,9 +13,13 @@
 
 @implementation HTTPAuthenticationRequest
 
+-(instancetype)init{
+    return [super init];
+}
+
 - (instancetype)initWithRequest:(HTTPMessage *)request
 {
-	if ((self = [super init]))
+	if ((self = [self init]))
 	{
 		NSString *authInfo = [request headerField:@"Authorization"];
 		

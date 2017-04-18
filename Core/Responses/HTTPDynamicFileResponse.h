@@ -47,6 +47,6 @@
 - (instancetype)initWithFilePath:(NSString *)filePath
          forConnection:(HTTPConnection *)connection
              separator:(NSString *)separatorStr
- replacementDictionary:(NSDictionary *)dictionary NS_DESIGNATED_INITIALIZER;
+ replacementDictionary:(NSDictionary *)dictionary ;
 
 @end

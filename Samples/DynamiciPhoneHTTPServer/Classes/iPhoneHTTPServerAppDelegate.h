@@ -4,15 +4,10 @@
 @class HTTPServer;
 
 @interface iPhoneHTTPServerAppDelegate : NSObject <UIApplicationDelegate>
-{
-	HTTPServer *httpServer;
-	
-	UIWindow *window;
-	iPhoneHTTPServerViewController *viewController;
-}
 
-@property (nonatomic) IBOutlet UIWindow *window;
-@property (nonatomic) IBOutlet iPhoneHTTPServerViewController *viewController;
+@property (nonatomic,strong) HTTPServer *httpServer;
+@property (nonatomic,strong) UIWindow *window;
+@property (nonatomic,strong) iPhoneHTTPServerViewController *viewController;
 
 @end
 

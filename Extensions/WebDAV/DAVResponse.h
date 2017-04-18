@@ -7,5 +7,5 @@
   NSData* _data;
   NSInteger _status;
 }
-- (instancetype) initWithMethod:(NSString*)method headers:(NSDictionary*)headers bodyData:(NSData*)body resourcePath:(NSString*)resourcePath rootPath:(NSString*)rootPath NS_DESIGNATED_INITIALIZER;
+- (instancetype) initWithMethod:(NSString*)method headers:(NSDictionary*)headers bodyData:(NSData*)body resourcePath:(NSString*)resourcePath rootPath:(NSString*)rootPath ;
 @end

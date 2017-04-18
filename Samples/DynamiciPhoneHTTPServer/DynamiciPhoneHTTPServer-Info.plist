@@ -26,7 +26,13 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMainNibFile</key>
-	<string>MainWindow</string>
+	<key>UILaunchStoryboardName</key>
+	<string>Launch Screen</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
 </dict>
 </plist>

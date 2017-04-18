@@ -20,11 +20,11 @@
 
 @property(nonatomic, assign, readonly) CFHTTPMessageRef message;
 
-- (instancetype)initEmptyRequest NS_DESIGNATED_INITIALIZER;
+- (instancetype)initEmptyRequest ;
 
-- (instancetype)initRequestWithMethod:(NSString *)method URL:(NSURL *)url version:(NSString *)version NS_DESIGNATED_INITIALIZER;
+- (instancetype)initRequestWithMethod:(NSString *)method URL:(NSURL *)url version:(NSString *)version ;
 
-- (instancetype)initResponseWithStatusCode:(NSInteger)code description:(NSString *)description version:(NSString *)version NS_DESIGNATED_INITIALIZER;
+- (instancetype)initResponseWithStatusCode:(NSInteger)code description:(NSString *)description version:(NSString *)version ;
 
 - (BOOL)appendData:(NSData *)data;
 

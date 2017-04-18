@@ -1,5 +1,6 @@
 #import "iPhoneHTTPServerViewController.h"
 
+#import "iPhoneHTTPServerAppDelegate.h"
 
 @implementation iPhoneHTTPServerViewController
 
@@ -8,7 +9,12 @@
 {
     [super viewDidLoad];
     
-    self.textView.text = @"";
+    iPhoneHTTPServerAppDelegate *dg = (iPhoneHTTPServerAppDelegate*)[UIApplication sharedApplication].delegate;
+    dg.viewController = self;
+    
+    self.theServer = dg.httpServer;
+    
+    self.textView.text = @"\n\nTo use all samples;\n\n1) Enable Bonjour in Safari Favorites.\n\n2) Use 'View' to show Favorites\n\n3)  Use the bonjour in the  Favorites bar";
 }
 
 
@@ -46,8 +52,7 @@
     
     publishedName = [publishedName stringByReplacingOccurrencesOfString:@" " withString:@"-"];
     publishedName = [publishedName stringByReplacingOccurrencesOfString:@"+" withString:@""];
-    
-//    NSString *serverConnectString = [NSString stringWithFormat:@"%@.%@:%ld", [ns name],[ns domain],(long)portNumber];
+
     NSString *serverConnectString = [NSString stringWithFormat:@"http://%@.%@:%ld", publishedName,[ns domain],(long)portNumber];
     
     self.statusLbl.text = serverConnectString;

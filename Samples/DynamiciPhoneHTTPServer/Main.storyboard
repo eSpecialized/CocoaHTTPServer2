@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="jMw-Zg-rvb">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--iPhoneHTTP Server View Controller-->
+        <scene sceneID="InN-C8-HU7">
+            <objects>
+                <viewController id="jMw-Zg-rvb" customClass="iPhoneHTTPServerViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Wrj-fa-lES"/>
+                        <viewControllerLayoutGuide type="bottom" id="6oV-AY-Kf4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="GSB-p7-WIl">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="58N-bh-lbQ">
+                                <rect key="frame" x="16" y="638" width="343" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="9yS-0t-FJt"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DuX-rC-cAv">
+                                <rect key="frame" x="0.0" y="28" width="375" height="602"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="6oV-AY-Kf4" firstAttribute="top" secondItem="58N-bh-lbQ" secondAttribute="bottom" constant="8" id="84N-7E-2JX"/>
+                            <constraint firstItem="DuX-rC-cAv" firstAttribute="top" secondItem="GSB-p7-WIl" secondAttribute="top" constant="28" id="87r-P9-qhA"/>
+                            <constraint firstAttribute="trailing" secondItem="DuX-rC-cAv" secondAttribute="trailing" id="A4V-Ul-2xj"/>
+                            <constraint firstItem="58N-bh-lbQ" firstAttribute="top" secondItem="DuX-rC-cAv" secondAttribute="bottom" constant="8" id="Cj8-IK-5wc"/>
+                            <constraint firstItem="58N-bh-lbQ" firstAttribute="leading" secondItem="GSB-p7-WIl" secondAttribute="leadingMargin" id="G8Z-SU-TxU"/>
+                            <constraint firstItem="DuX-rC-cAv" firstAttribute="leading" secondItem="GSB-p7-WIl" secondAttribute="leading" id="Xoz-AN-JO0"/>
+                            <constraint firstItem="58N-bh-lbQ" firstAttribute="trailing" secondItem="GSB-p7-WIl" secondAttribute="trailingMargin" id="a4B-K8-Ynh"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="statusLbl" destination="58N-bh-lbQ" id="j9g-L6-GzY"/>
+                        <outlet property="textView" destination="DuX-rC-cAv" id="xx9-xj-9Co"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gF8-PR-Jj7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="133.59999999999999" y="157.87106446776613"/>
+        </scene>
+    </scenes>
+</document>

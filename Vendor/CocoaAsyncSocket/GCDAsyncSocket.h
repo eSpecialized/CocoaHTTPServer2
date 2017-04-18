@@ -114,7 +114,7 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
 - (instancetype)init;
 - (instancetype)initWithSocketQueue:(dispatch_queue_t)sq;
 - (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq;
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq ;
 
 #pragma mark Configuration
 

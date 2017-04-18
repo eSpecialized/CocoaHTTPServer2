@@ -24,7 +24,7 @@
 	NSString *cnonce;
 	NSString *response;
 }
-- (instancetype)initWithRequest:(HTTPMessage *)request NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithRequest:(HTTPMessage *)request ;
 
 @property (NS_NONATOMIC_IOSONLY, getter=isBasic, readonly) BOOL basic;
 @property (NS_NONATOMIC_IOSONLY, getter=isDigest, readonly) BOOL digest;

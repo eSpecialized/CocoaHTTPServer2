@@ -367,7 +367,7 @@ enum GCDAsyncSocketConfig
 	uint8_t *writePointer;
 }
 
-- (instancetype)initWithCapacity:(size_t)numBytes NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCapacity:(size_t)numBytes ;
 
 - (void)ensureCapacityForWrite:(size_t)numBytes;
 
@@ -519,7 +519,7 @@ enum GCDAsyncSocketConfig
            timeout:(NSTimeInterval)t
         readLength:(NSUInteger)l
         terminator:(NSData *)e
-               tag:(long)i NS_DESIGNATED_INITIALIZER;
+               tag:(long)i ;
 
 - (void)ensureCapacityForAdditionalDataOfLength:(NSUInteger)bytesToRead;
 
@@ -973,7 +973,7 @@ enum GCDAsyncSocketConfig
 	long tag;
 	NSTimeInterval timeout;
 }
-- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i ;
 @end
 
 @implementation GCDAsyncWritePacket
@@ -1006,7 +1006,7 @@ enum GCDAsyncSocketConfig
   @public
 	NSDictionary *tlsSettings;
 }
-- (instancetype)initWithTLSSettings:(NSDictionary *)settings NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTLSSettings:(NSDictionary *)settings ;
 @end
 
 @implementation GCDAsyncSpecialPacket

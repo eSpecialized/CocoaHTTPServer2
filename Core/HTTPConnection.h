@@ -24,8 +24,8 @@
 	dispatch_queue_t queue;
 }
 
-- (instancetype)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot queue:(dispatch_queue_t)q NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot;
+- (instancetype)initWithServer:(HTTPServer *)server documentRoot:(NSString *)documentRoot queue:(dispatch_queue_t)q;
 
 #if __has_feature(objc_arc_weak)
 @property (nonatomic, weak, readonly) HTTPServer *server;
@@ -73,7 +73,7 @@
 	NSMutableArray *responseDataSizes;
 }
 
-- (instancetype)initWithAsyncSocket:(GCDAsyncSocket *)newSocket configuration:(HTTPConfig *)aConfig NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithAsyncSocket:(GCDAsyncSocket *)newSocket configuration:(HTTPConfig *)aConfig ;
 
 - (void)start;
 - (void)stop;

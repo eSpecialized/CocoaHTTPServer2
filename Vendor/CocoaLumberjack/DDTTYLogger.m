@@ -115,7 +115,7 @@
 	size_t resetCodeLen;
 }
 
-- (instancetype)initWithForegroundColor:(OSColor *)fgColor backgroundColor:(OSColor *)bgColor flag:(int)mask context:(int)ctxt NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithForegroundColor:(OSColor *)fgColor backgroundColor:(OSColor *)bgColor flag:(int)mask context:(int)ctxt ;
 
 @end
 

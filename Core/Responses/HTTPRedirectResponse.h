@@ -7,6 +7,6 @@
 	NSString *redirectPath;
 }
 
-- (instancetype)initWithPath:(NSString *)redirectPath NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPath:(NSString *)redirectPath ;
 
 @end

@@ -33,7 +33,7 @@ NSString* extractParamValue(const char* bytes, NSUInteger length, NSStringEncodi
 @implementation MultipartMessageHeaderField
 @synthesize name,value,params;
 
-- (id) initWithData:(NSData *)data contentEncoding:(NSStringEncoding)encoding {
+- (instancetype) initWithData:(NSData *)data contentEncoding:(NSStringEncoding)encoding {
 	params = [[NSMutableDictionary alloc] initWithCapacity:1];
 
 	char* bytes = (char*)data.bytes;
@@ -128,11 +128,11 @@ NSString* extractParamValue(const char* bytes, NSUInteger length, NSStringEncodi
 			}
 			else {
 #ifdef DEBUG
-				if( [params objectForKey:currentParam] ) {
+				if( params[currentParam] ) {
 					HTTPLogWarn(@"MultipartFormDataParser: param %@ mentioned more then once in header %@",currentParam,name);
 				}
 #endif
-				[params setObject:paramValue forKey:currentParam];
+				params[currentParam] = paramValue;
 				HTTPLogVerbose(@"MultipartFormDataParser: header param: %@ = %@",currentParam,paramValue);
 			}
 
@@ -159,11 +159,11 @@ NSString* extractParamValue(const char* bytes, NSUInteger length, NSStringEncodi
 		}
 
 #ifdef DEBUG
-		if( [params objectForKey:currentParam] ) {
+		if( params[currentParam] ) {
 			HTTPLogWarn(@"MultipartFormDataParser: param %@ mentioned more then once in one header",currentParam);
 		}
 #endif
-		[params setObject:paramValue forKey:currentParam];
+		params[currentParam] = paramValue;
 		HTTPLogVerbose(@"MultipartFormDataParser: header param: %@ = %@",currentParam,paramValue);
 		currentParam = nil;
 	}

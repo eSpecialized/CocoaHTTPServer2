@@ -57,7 +57,7 @@
 
 - (NSArray *)whitelist
 {
-	return [contextSet currentSet];
+	return contextSet.currentSet;
 }
 
 - (BOOL)isOnWhitelist:(int)loggingContext
@@ -106,7 +106,7 @@
 
 - (NSArray *)blacklist
 {
-	return [contextSet currentSet];
+	return contextSet.currentSet;
 }
 
 - (BOOL)isOnBlacklist:(int)loggingContext

@@ -514,7 +514,7 @@ static unsigned int numProcessors;
 	{
 		// Logger may be providing its own queue
 		
-		loggerQueue = [logger loggerQueue];
+		loggerQueue = logger.loggerQueue;
 	}
 	
 	if (loggerQueue == nil)
@@ -525,7 +525,7 @@ static unsigned int numProcessors;
 		const char *loggerQueueName = NULL;
 		if ([logger respondsToSelector:@selector(loggerName)])
 		{
-			loggerQueueName = [logger loggerName].UTF8String;
+			loggerQueueName = logger.loggerName.UTF8String;
 		}
 		
 		loggerQueue = dispatch_queue_create(loggerQueueName, NULL);
@@ -923,7 +923,7 @@ static char *dd_str_copy(const char *str)
 		const char *loggerQueueName = NULL;
 		if ([self respondsToSelector:@selector(loggerName)])
 		{
-			loggerQueueName = [self loggerName].UTF8String;
+			loggerQueueName = self.loggerName.UTF8String;
 		}
 		
 		loggerQueue = dispatch_queue_create(loggerQueueName, NULL);

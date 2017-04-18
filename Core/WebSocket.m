@@ -178,7 +178,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	{
 		if (HTTP_LOG_VERBOSE)
 		{
-			NSData *requestHeaders = [aRequest messageData];
+			NSData *requestHeaders = aRequest.messageData;
 			
 			NSString *temp = [[NSString alloc] initWithData:requestHeaders encoding:NSUTF8StringEncoding];
 			HTTPLogVerbose(@"%@[%p] Request Headers:\n%@", THIS_FILE, self, temp);
@@ -295,7 +295,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	
 	if (origin == nil)
 	{
-		NSString *port = [NSString stringWithFormat:@"%hu", [asyncSocket localPort]];
+		NSString *port = [NSString stringWithFormat:@"%hu", asyncSocket.localPort];
 		
 		return [NSString stringWithFormat:@"http://localhost:%@", port];
 	}
@@ -311,14 +311,14 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	
 	NSString *location;
 	
-	NSString *scheme = [asyncSocket isSecure] ? @"wss" : @"ws";
+	NSString *scheme = asyncSocket.secure ? @"wss" : @"ws";
 	NSString *host = [request headerField:@"Host"];
 	
-	NSString *requestUri = [request url].relativeString;
+	NSString *requestUri = request.url.relativeString;
 	
 	if (host == nil)
 	{
-		NSString *port = [NSString stringWithFormat:@"%hu", [asyncSocket localPort]];
+		NSString *port = [NSString stringWithFormat:@"%hu", asyncSocket.localPort];
 		
 		location = [NSString stringWithFormat:@"%@://localhost:%@%@", scheme, port, requestUri];
 	}
@@ -416,7 +416,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 		[wsResponse setHeaderField: @"Sec-WebSocket-Accept" value: acceptValue];
 	}
 
-	NSData *responseHeaders = [wsResponse messageData];
+	NSData *responseHeaders = wsResponse.messageData;
 	
 	
 	if (HTTP_LOG_VERBOSE)
@@ -497,7 +497,7 @@ static inline NSUInteger WS_PAYLOAD_LENGTH(UInt8 frame)
 	
 	// Hash the data using MD5
 	
-	NSData *responseBody = [d0 md5Digest];
+	NSData *responseBody = d0.md5Digest;
 	
 	[asyncSocket writeData:responseBody withTimeout:TIMEOUT_NONE tag:TAG_HTTP_RESPONSE_BODY];
 	

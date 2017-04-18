@@ -134,7 +134,7 @@
 		return;
 	}
 	
-	NSArray *sortedLogFileInfos = [self sortedLogFileInfos];
+	NSArray *sortedLogFileInfos = self.sortedLogFileInfos;
 	
 	// Do we consider the first file?
 	// We are only supposed to be deleting archived files.
@@ -192,9 +192,9 @@
 	NSString *logsDirectory = [baseDir stringByAppendingPathComponent:@"Logs"];
     
 #else
-	NSString *appName = [[NSProcessInfo processInfo] processName];
+	NSString *appName = [NSProcessInfo processInfo].processName;
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : NSTemporaryDirectory();
+	NSString *basePath = (paths.count > 0) ? paths[0] : NSTemporaryDirectory();
 	NSString *logsDirectory = [[basePath stringByAppendingPathComponent:@"Logs"] stringByAppendingPathComponent:appName];
 
 #endif
@@ -253,7 +253,7 @@
 **/
 - (NSArray *)unsortedLogFilePaths
 {
-	NSString *logsDirectory = [self logsDirectory];
+	NSString *logsDirectory = self.logsDirectory;
 	NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:logsDirectory error:nil];
 	
 	NSMutableArray *unsortedLogFilePaths = [NSMutableArray arrayWithCapacity:fileNames.count];
@@ -279,7 +279,7 @@
 **/
 - (NSArray *)unsortedLogFileNames
 {
-	NSArray *unsortedLogFilePaths = [self unsortedLogFilePaths];
+	NSArray *unsortedLogFilePaths = self.unsortedLogFilePaths;
 	
 	NSMutableArray *unsortedLogFileNames = [NSMutableArray arrayWithCapacity:unsortedLogFilePaths.count];
 	
@@ -298,7 +298,7 @@
 **/
 - (NSArray *)unsortedLogFileInfos
 {
-	NSArray *unsortedLogFilePaths = [self unsortedLogFilePaths];
+	NSArray *unsortedLogFilePaths = self.unsortedLogFilePaths;
 	
 	NSMutableArray *unsortedLogFileInfos = [NSMutableArray arrayWithCapacity:unsortedLogFilePaths.count];
 	
@@ -319,7 +319,7 @@
 **/
 - (NSArray *)sortedLogFilePaths
 {
-	NSArray *sortedLogFileInfos = [self sortedLogFileInfos];
+	NSArray *sortedLogFileInfos = self.sortedLogFileInfos;
 	
 	NSMutableArray *sortedLogFilePaths = [NSMutableArray arrayWithCapacity:sortedLogFileInfos.count];
 	
@@ -338,7 +338,7 @@
 **/
 - (NSArray *)sortedLogFileNames
 {
-	NSArray *sortedLogFileInfos = [self sortedLogFileInfos];
+	NSArray *sortedLogFileInfos = self.sortedLogFileInfos;
 	
 	NSMutableArray *sortedLogFileNames = [NSMutableArray arrayWithCapacity:sortedLogFileInfos.count];
 	
@@ -357,7 +357,7 @@
 **/
 - (NSArray *)sortedLogFileInfos
 {
-	return [[self unsortedLogFileInfos] sortedArrayUsingSelector:@selector(reverseCompareByCreationDate:)];
+	return [self.unsortedLogFileInfos sortedArrayUsingSelector:@selector(reverseCompareByCreationDate:)];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -388,7 +388,7 @@
 {
 	// Generate a random log file name, and create the file (if there isn't a collision)
 	
-	NSString *logsDirectory = [self logsDirectory];
+	NSString *logsDirectory = self.logsDirectory;
 	do
 	{
 		NSString *fileName = [NSString stringWithFormat:@"log-%@.txt", [self generateShortUUID]];
@@ -676,7 +676,7 @@
 	// The design of this method is taken from the DDAbstractLogger implementation.
 	// For extensive documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -768,7 +768,7 @@
 {
 	if (currentLogFileInfo == nil)
 	{
-		NSArray *sortedLogFileInfos = [logFileManager sortedLogFileInfos];
+		NSArray *sortedLogFileInfos = logFileManager.sortedLogFileInfos;
 		
 		if (sortedLogFileInfos.count > 0)
 		{
@@ -815,7 +815,7 @@
 		
 		if (currentLogFileInfo == nil)
 		{
-			NSString *currentLogFilePath = [logFileManager createNewLogFile];
+			NSString *currentLogFilePath = logFileManager.createNewLogFile;
 			
 			currentLogFileInfo = [[DDLogFileInfo alloc] initWithFilePath:currentLogFilePath];
 		}
@@ -992,7 +992,7 @@
 		
 	#else
 		
-		creationDate = [[self fileAttributes] objectForKey:NSFileCreationDate];
+		creationDate = self.fileAttributes[NSFileCreationDate];
 		
 	#endif
 		

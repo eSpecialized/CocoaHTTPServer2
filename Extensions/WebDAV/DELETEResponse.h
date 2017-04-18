@@ -3,5 +3,5 @@
 @interface DELETEResponse : NSObject <HTTPResponse> {
   NSInteger _status;
 }
-- (id) initWithFilePath:(NSString*)path;
+- (instancetype) initWithFilePath:(NSString*)path NS_DESIGNATED_INITIALIZER;
 @end

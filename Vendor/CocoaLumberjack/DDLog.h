@@ -396,7 +396,7 @@ NSString *DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy);
  * Thus, a dedicated dispatch queue is used for each logger.
  * Logger implementations may optionally choose to provide their own dispatch queue.
 **/
-@property (NS_NONATOMIC_IOSONLY, readonly, strong) dispatch_queue_t loggerQueue;
+@property (NS_NONATOMIC_IOSONLY, readonly, assign) dispatch_queue_t loggerQueue;
 
 /**
  * If the logger implementation does not choose to provide its own queue,

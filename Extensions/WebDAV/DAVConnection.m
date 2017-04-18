@@ -64,7 +64,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
   NSAssert(requestContentBody == nil, @"requestContentBody should be nil");
   
   if (contentLength > HTTP_BODY_MAX_MEMORY_SIZE) {
-    requestContentBody = [[NSTemporaryDirectory() stringByAppendingString:[[NSProcessInfo processInfo] globallyUniqueString]] copy];
+    requestContentBody = [[NSTemporaryDirectory() stringByAppendingString:[NSProcessInfo processInfo].globallyUniqueString] copy];
     requestContentStream = [[NSOutputStream alloc] initToFileAtPath:requestContentBody append:NO];
     [requestContentStream open];
   } else {
@@ -76,7 +76,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 - (void) processBodyData:(NSData*)postDataChunk {
 	NSAssert(requestContentBody != nil, @"requestContentBody should not be nil");
   if (requestContentStream) {
-    [requestContentStream write:[postDataChunk bytes] maxLength:[postDataChunk length]];
+    [requestContentStream write:postDataChunk.bytes maxLength:postDataChunk.length];
   } else {
     [(NSMutableData*)requestContentBody appendData:postDataChunk];
   }
@@ -103,7 +103,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
     if (filePath) {
       NSDictionary* fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:NULL];
       if (fileAttributes) {
-        if ([[fileAttributes objectForKey:NSFileSize] unsignedLongLongValue] > HTTP_ASYNC_FILE_RESPONSE_THRESHOLD) {
+        if ([fileAttributes[NSFileSize] unsignedLongLongValue] > HTTP_ASYNC_FILE_RESPONSE_THRESHOLD) {
           return [[HTTPAsyncFileResponse alloc] initWithFilePath:filePath forConnection:self];
         } else {
           return [[HTTPFileResponse alloc] initWithFilePath:filePath forConnection:self];
@@ -116,9 +116,9 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
     NSString* filePath = [self filePathForURI:path allowDirectory:YES];
     if (filePath) {
       if ([requestContentBody isKindOfClass:[NSString class]]) {
-        return [[PUTResponse alloc] initWithFilePath:filePath headers:[request allHeaderFields] bodyFile:requestContentBody];
+        return [[PUTResponse alloc] initWithFilePath:filePath headers:request.allHeaderFields bodyFile:requestContentBody];
       } else if ([requestContentBody isKindOfClass:[NSData class]]) {
-        return [[PUTResponse alloc] initWithFilePath:filePath headers:[request allHeaderFields] bodyData:requestContentBody];
+        return [[PUTResponse alloc] initWithFilePath:filePath headers:request.allHeaderFields bodyData:requestContentBody];
       } else {
         HTTPLogError(@"Internal error");
       }
@@ -136,8 +136,8 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
     [method isEqualToString:@"MOVE"] || [method isEqualToString:@"COPY"] || [method isEqualToString:@"LOCK"] || [method isEqualToString:@"UNLOCK"]) {
     NSString* filePath = [self filePathForURI:path allowDirectory:YES];
     if (filePath) {
-      NSString* rootPath = [config documentRoot];
-      NSString* resourcePath = [filePath substringFromIndex:([rootPath length] + 1)];
+      NSString* rootPath = config.documentRoot;
+      NSString* resourcePath = [filePath substringFromIndex:(rootPath.length + 1)];
       if (requestContentBody) {
         if ([requestContentBody isKindOfClass:[NSString class]]) {
           requestContentBody = [NSData dataWithContentsOfFile:requestContentBody];
@@ -147,7 +147,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
         }
       }
       return [[DAVResponse alloc] initWithMethod:method
-                                          headers:[request allHeaderFields]
+                                          headers:request.allHeaderFields
                                          bodyData:requestContentBody
                                      resourcePath:resourcePath
                                          rootPath:rootPath];

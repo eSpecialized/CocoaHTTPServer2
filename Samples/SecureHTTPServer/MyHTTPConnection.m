@@ -31,7 +31,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 	HTTPLogTrace();
 	
 	NSArray *result = [DDKeychain SSLIdentityAndCertificates];
-	if([result count] == 0)
+	if(result.count == 0)
 	{
 		[DDKeychain createNewIdentity];
 		return [DDKeychain SSLIdentityAndCertificates];

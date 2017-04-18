@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Samples/README.markdown">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/WebDAVServer/WebDAVServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/SimpleWebSocketServer/SimpleWebSocketServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/SimpleHTTPServer/SimpleHTTPServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/SimpleFileUploadServer/SimpleFileUploadServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/SecureWebSocketServer/SecureWebSocketServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/SecureHTTPServer/SecureHTTPServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/PostHTTPServer/PostHTTPServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/PasswdHTTPServer/PasswdHTTPServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/iPhoneHTTPServer/iPhoneHTTPServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/DynamicServer/DynamicServer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Samples/DynamiciPhoneHTTPServer/DynamiciPhoneHTTPServer.xcodeproj">
+   </FileRef>
+</Workspace>

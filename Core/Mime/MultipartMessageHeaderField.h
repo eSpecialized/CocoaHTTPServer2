@@ -18,6 +18,6 @@
 //- (id) initWithLine:(NSString*) line;
 //- (id) initWithName:(NSString*) paramName value:(NSString*) paramValue;
 
-- (id) initWithData:(NSData*) data contentEncoding:(NSStringEncoding) encoding;
+- (instancetype) initWithData:(NSData*) data contentEncoding:(NSStringEncoding) encoding;
 
 @end

@@ -14,8 +14,8 @@
 {
 	NSString *password = nil;
 	
-	const char *service = [@"HTTP Server" UTF8String];
-	const char *account = [@"Deusty" UTF8String];
+	const char *service = (@"HTTP Server").UTF8String;
+	const char *account = (@"Deusty").UTF8String;
 	
 	UInt32 passwordLength = 0;
 	void *passwordBytes = nil;
@@ -51,10 +51,10 @@
 **/
 + (BOOL)setPasswordForHTTPServer:(NSString *)password
 {
-	const char *service = [@"HTTP Server" UTF8String];
-	const char *account = [@"Deusty" UTF8String];
-	const char *kind    = [@"Deusty password" UTF8String];
-	const char *passwd  = [password UTF8String];
+	const char *service = (@"HTTP Server").UTF8String;
+	const char *account = (@"Deusty").UTF8String;
+	const char *kind    = (@"Deusty password").UTF8String;
+	const char *passwd  = password.UTF8String;
 	
 	SecKeychainItemRef itemRef = NULL;
 	
@@ -134,18 +134,18 @@
 	// You may used a bigger number.
 	// It is probably a good recommendation to use at least 1024...
 	
-	NSArray *privateKeyArgs = [NSArray arrayWithObjects:@"genrsa", @"-out", privateKeyPath, @"1024", nil];
+	NSArray *privateKeyArgs = @[@"genrsa", @"-out", privateKeyPath, @"1024"];
 	
 	NSTask *genPrivateKeyTask = [[NSTask alloc] init];
 	
-	[genPrivateKeyTask setLaunchPath:@"/usr/bin/openssl"];
-	[genPrivateKeyTask setArguments:privateKeyArgs];
+	genPrivateKeyTask.launchPath = @"/usr/bin/openssl";
+	genPrivateKeyTask.arguments = privateKeyArgs;
     [genPrivateKeyTask launch];
 	
 	// Don't use waitUntilExit - I've had too many problems with it in the past
 	do {
 		[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
-	} while([genPrivateKeyTask isRunning]);
+	} while(genPrivateKeyTask.running);
 	
 	// Now we want to create a configuration file for our certificate
 	// This is an optional step, but we do it so people who are browsing their keychain
@@ -173,45 +173,45 @@
 	// You can optionally create a configuration file, and pass an extra command to use it:
 	// -config req.conf
 	
-	NSArray *certificateArgs = [NSArray arrayWithObjects:@"req", @"-new", @"-x509",
+	NSArray *certificateArgs = @[@"req", @"-new", @"-x509",
 														 @"-key", privateKeyPath,
 	                                                     @"-config", reqConfPath,
 	                                                     @"-out", certificatePath,
-	                                                     @"-text", @"-days", @"365", @"-batch", nil];
+	                                                     @"-text", @"-days", @"365", @"-batch"];
 	
 	NSTask *genCertificateTask = [[NSTask alloc] init];
 	
-	[genCertificateTask setLaunchPath:@"/usr/bin/openssl"];
-	[genCertificateTask setArguments:certificateArgs];
+	genCertificateTask.launchPath = @"/usr/bin/openssl";
+	genCertificateTask.arguments = certificateArgs;
     [genCertificateTask launch];
 	
 	// Don't use waitUntilExit - I've had too many problems with it in the past
 	do {
 		[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
-	} while([genCertificateTask isRunning]);
+	} while(genCertificateTask.running);
 	
 	// Mac OS X has problems importing private keys, so we wrap everything in PKCS#12 format
 	// You can create a p12 wrapper by running the following command in the terminal:
 	// openssl pkcs12 -export -in certificate.crt -inkey private.pem
 	//   -passout pass:password -out certificate.p12 -name "Open Source"
 	
-	NSArray *certWrapperArgs = [NSArray arrayWithObjects:@"pkcs12", @"-export", @"-export",
+	NSArray *certWrapperArgs = @[@"pkcs12", @"-export", @"-export",
 														 @"-in", certificatePath,
 	                                                     @"-inkey", privateKeyPath,
 	                                                     @"-passout", @"pass:password",
 	                                                     @"-out", certWrapperPath,
-	                                                     @"-name", @"SecureHTTPServer", nil];
+	                                                     @"-name", @"SecureHTTPServer"];
 	
 	NSTask *genCertWrapperTask = [[NSTask alloc] init];
 	
-	[genCertWrapperTask setLaunchPath:@"/usr/bin/openssl"];
-	[genCertWrapperTask setArguments:certWrapperArgs];
+	genCertWrapperTask.launchPath = @"/usr/bin/openssl";
+	genCertWrapperTask.arguments = certWrapperArgs;
     [genCertWrapperTask launch];
 	
 	// Don't use waitUntilExit - I've had too many problems with it in the past
 	do {
 		[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
-	} while([genCertWrapperTask isRunning]);
+	} while(genCertWrapperTask.running);
 	
 	// At this point we've created all the identity files that we need
 	// Our next step is to import the identity into the keychain
@@ -460,7 +460,7 @@
 				{
 					// It's possible for there to be more than one private key with the above prefix
 					// But we're only allowed to have one identity, so we make sure to only add one to the array
-					if([result count] == 0)
+					if(result.count == 0)
 					{
 						[result addObject:(__bridge id)currentIdentityRef];
 					}

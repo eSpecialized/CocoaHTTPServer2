@@ -20,7 +20,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	
 	// Tell the server to broadcast its presence via Bonjour.
 	// This allows browsers such as Safari to automatically discover our service.
-	[httpServer setType:@"_http._tcp."];
+	httpServer.type = @"_http._tcp.";
 	
 	// Normally there's no need to run our server on any specific port.
 	// Technologies like Bonjour allow clients to dynamically discover the server's port at runtime.
@@ -28,12 +28,12 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     //	[httpServer setPort:12345];
 	
 	// Serve files from the standard Sites folder
-	NSString *docRoot = [[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"web"] stringByDeletingLastPathComponent];
+	NSString *docRoot = [[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"web"].stringByDeletingLastPathComponent;
 	DDLogInfo(@"Setting document root: %@", docRoot);
 	
-	[httpServer setDocumentRoot:docRoot];
+	httpServer.documentRoot = docRoot;
 	
-	[httpServer setConnectionClass:[MyHTTPConnection class]];
+	httpServer.connectionClass = [MyHTTPConnection class];
 	
 	NSError *error = nil;
 	if(![httpServer start:&error])

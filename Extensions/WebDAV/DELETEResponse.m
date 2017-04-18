@@ -9,7 +9,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 
 @implementation DELETEResponse
 
-- (id) initWithFilePath:(NSString*)path {
+- (instancetype) initWithFilePath:(NSString*)path {
   if ((self = [super init])) {
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path];
     if ([[NSFileManager defaultManager] removeItemAtPath:path error:NULL]) {

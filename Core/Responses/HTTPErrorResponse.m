@@ -2,7 +2,7 @@
 
 @implementation HTTPErrorResponse
 
--(id)initWithErrorCode:(int)httpErrorCode
+-(instancetype)initWithErrorCode:(int)httpErrorCode
 {
     if ((self = [super init]))
     {

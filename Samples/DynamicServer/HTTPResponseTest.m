@@ -43,7 +43,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_OFF; // | HTTP_LOG_FLAG_TRACE;
 
 @implementation HTTPResponseTest
 
-- (id)initWithConnection:(HTTPConnection *)parent
+- (instancetype)initWithConnection:(HTTPConnection *)parent
 {
 	if ((self = [super init]))
 	{

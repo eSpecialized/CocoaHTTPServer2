@@ -5,13 +5,13 @@
 
 // WebDAV specifications: http://webdav.org/specs/rfc4918.html
 
-typedef enum {
+typedef NS_OPTIONS(unsigned int, DAVProperties) {
   kDAVProperty_ResourceType = (1 << 0),
   kDAVProperty_CreationDate = (1 << 1),
   kDAVProperty_LastModified = (1 << 2),
   kDAVProperty_ContentLength = (1 << 3),
   kDAVAllProperties = kDAVProperty_ResourceType | kDAVProperty_CreationDate | kDAVProperty_LastModified | kDAVProperty_ContentLength
-} DAVProperties;
+};
 
 #define kXMLParseOptions (XML_PARSE_NONET | XML_PARSE_RECOVER | XML_PARSE_NOBLANKS | XML_PARSE_COMPACT | XML_PARSE_NOWARNING | XML_PARSE_NOERROR)
 
@@ -38,7 +38,7 @@ static void _AddPropertyResponse(NSString* itemPath, NSString* resourcePath, DAV
             }
           }
           
-          if ((properties & kDAVProperty_CreationDate) && [attributes objectForKey:NSFileCreationDate]) {
+          if ((properties & kDAVProperty_CreationDate) && attributes[NSFileCreationDate]) {
             NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
             formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
             formatter.timeZone = [NSTimeZone timeZoneWithName:@"GMT"];
@@ -46,7 +46,7 @@ static void _AddPropertyResponse(NSString* itemPath, NSString* resourcePath, DAV
             [xmlString appendFormat:@"<D:creationdate>%@</D:creationdate>", [formatter stringFromDate:[attributes fileCreationDate]]];
           }
           
-          if ((properties & kDAVProperty_LastModified) && [attributes objectForKey:NSFileModificationDate]) {
+          if ((properties & kDAVProperty_LastModified) && attributes[NSFileModificationDate]) {
             NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
             formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
             formatter.timeZone = [NSTimeZone timeZoneWithName:@"GMT"];
@@ -54,7 +54,7 @@ static void _AddPropertyResponse(NSString* itemPath, NSString* resourcePath, DAV
             [xmlString appendFormat:@"<D:getlastmodified>%@</D:getlastmodified>", [formatter stringFromDate:[attributes fileModificationDate]]];
           }
           
-          if ((properties & kDAVProperty_ContentLength) && !isDirectory && [attributes objectForKey:NSFileSize]) {
+          if ((properties & kDAVProperty_ContentLength) && !isDirectory && attributes[NSFileSize]) {
             [xmlString appendFormat:@"<D:getcontentlength>%qu</D:getcontentlength>", [attributes fileSize]];
           }
         
@@ -76,24 +76,24 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
   return NULL;
 }
 
-- (id) initWithMethod:(NSString*)method headers:(NSDictionary*)headers bodyData:(NSData*)body resourcePath:(NSString*)resourcePath rootPath:(NSString*)rootPath {
+- (instancetype) initWithMethod:(NSString*)method headers:(NSDictionary*)headers bodyData:(NSData*)body resourcePath:(NSString*)resourcePath rootPath:(NSString*)rootPath {
   if ((self = [super init])) {
     _status = 200;
     _headers = [[NSMutableDictionary alloc] init];
     
     // 10.1 DAV Header
     if ([method isEqualToString:@"OPTIONS"]) {
-      if ([[headers objectForKey:@"User-Agent"] hasPrefix:@"WebDAVFS/"]) {  // Mac OS X WebDAV support
-        [_headers setObject:@"1, 2" forKey:@"DAV"];
+      if ([headers[@"User-Agent"] hasPrefix:@"WebDAVFS/"]) {  // Mac OS X WebDAV support
+        _headers[@"DAV"] = @"1, 2";
       } else {
-        [_headers setObject:@"1" forKey:@"DAV"];
+        _headers[@"DAV"] = @"1";
       }
     }
     
     // 9.1 PROPFIND Method
     if ([method isEqualToString:@"PROPFIND"]) {
       NSInteger depth;
-      NSString* depthHeader = [headers objectForKey:@"Depth"];
+      NSString* depthHeader = headers[@"Depth"];
       if ([depthHeader isEqualToString:@"0"]) {
         depth = 0;
       } else if ([depthHeader isEqualToString:@"1"]) {
@@ -159,7 +159,7 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
       }
       [xmlString appendString:@"</D:multistatus>"];
       
-      [_headers setObject:@"application/xml; charset=\"utf-8\"" forKey:@"Content-Type"];
+      _headers[@"Content-Type"] = @"application/xml; charset=\"utf-8\"";
       _data = [xmlString dataUsingEncoding:NSUTF8StringEncoding];
       _status = 207;
     }
@@ -171,7 +171,7 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
         return nil;
       }
       
-      if (![[NSFileManager defaultManager] fileExistsAtPath:[path stringByDeletingLastPathComponent]]) {
+      if (![[NSFileManager defaultManager] fileExistsAtPath:path.stringByDeletingLastPathComponent]) {
         HTTPLogError(@"Missing intermediate collection(s) at \"%@\"", path);
         _status = 409;
       } else if (![[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:NO attributes:nil error:NULL]) {
@@ -183,8 +183,8 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
     // 9.8 COPY Method
     // 9.9 MOVE Method
     if ([method isEqualToString:@"MOVE"] || [method isEqualToString:@"COPY"]) {
-      if ([method isEqualToString:@"COPY"] && ![[headers objectForKey:@"Depth"] isEqualToString:@"infinity"]) {
-        HTTPLogError(@"Unsupported DAV depth \"%@\"", [headers objectForKey:@"Depth"]);
+      if ([method isEqualToString:@"COPY"] && ![headers[@"Depth"] isEqualToString:@"infinity"]) {
+        HTTPLogError(@"Unsupported DAV depth \"%@\"", headers[@"Depth"]);
         return nil;
       }
       
@@ -193,8 +193,8 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
         return nil;
       }
       
-      NSString* destination = [headers objectForKey:@"Destination"];
-      NSRange range = [destination rangeOfString:[headers objectForKey:@"Host"]];
+      NSString* destination = headers[@"Destination"];
+      NSRange range = [destination rangeOfString:headers[@"Host"]];
       if (range.location == NSNotFound) {
         return nil;
       }
@@ -205,12 +205,12 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
       }
       
       BOOL isDirectory;
-      if (![[NSFileManager defaultManager] fileExistsAtPath:[destinationPath stringByDeletingLastPathComponent] isDirectory:&isDirectory] || !isDirectory) {
+      if (![[NSFileManager defaultManager] fileExistsAtPath:destinationPath.stringByDeletingLastPathComponent isDirectory:&isDirectory] || !isDirectory) {
         HTTPLogError(@"Invalid destination path \"%@\"", destinationPath);
         _status = 409;
       } else {
         BOOL existing = [[NSFileManager defaultManager] fileExistsAtPath:destinationPath];
-        if (existing && [[headers objectForKey:@"Overwrite"] isEqualToString:@"F"]) {
+        if (existing && [headers[@"Overwrite"] isEqualToString:@"F"]) {
           HTTPLogError(@"Pre-existing destination path \"%@\"", destinationPath);
           _status = 412;
         } else {
@@ -240,7 +240,7 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
         return nil;
       }
       
-      NSString* depth = [headers objectForKey:@"Depth"];
+      NSString* depth = headers[@"Depth"];
       NSString* scope = nil;
       NSString* type = nil;
       NSString* owner = nil;
@@ -251,17 +251,17 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
         if (node) {
           xmlNodePtr scopeNode = _XMLChildWithName(node->children, (const xmlChar*)"lockscope");
           if (scopeNode && scopeNode->children && scopeNode->children->name) {
-            scope = [NSString stringWithUTF8String:(const char*)scopeNode->children->name];
+            scope = @((const char*)scopeNode->children->name);
           }
           xmlNodePtr typeNode = _XMLChildWithName(node->children, (const xmlChar*)"locktype");
           if (typeNode && typeNode->children && typeNode->children->name) {
-            type = [NSString stringWithUTF8String:(const char*)typeNode->children->name];
+            type = @((const char*)typeNode->children->name);
           }
           xmlNodePtr ownerNode = _XMLChildWithName(node->children, (const xmlChar*)"owner");
           if (ownerNode) {
             ownerNode = _XMLChildWithName(ownerNode->children, (const xmlChar*)"href");
             if (ownerNode && ownerNode->children && ownerNode->children->content) {
-              owner = [NSString stringWithUTF8String:(const char*)ownerNode->children->content];
+              owner = @((const char*)ownerNode->children->content);
             }
           }
         } else {
@@ -272,7 +272,7 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
 		  // No body, see if they're trying to refresh an existing lock.  If so, then just fake up the scope, type and depth so we fall
 		  // into the lock create case.
 		  NSString* lockToken;
-		  if ((lockToken = [headers objectForKey:@"If"]) != nil) {
+		  if ((lockToken = headers[@"If"]) != nil) {
 			  scope = @"exclusive";
 			  type = @"write";
 			  depth = @"0";
@@ -281,7 +281,7 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
 	  }
       if ([scope isEqualToString:@"exclusive"] && [type isEqualToString:@"write"] && [depth isEqualToString:@"0"] &&
         ([[NSFileManager defaultManager] fileExistsAtPath:path] || [[NSData data] writeToFile:path atomically:YES])) {
-        NSString* timeout = [headers objectForKey:@"Timeout"];
+        NSString* timeout = headers[@"Timeout"];
 		if (!token) {
           CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
           NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
@@ -302,12 +302,12 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
           [xmlString appendFormat:@"<D:timeout>%@</D:timeout>\n", timeout];
         }
         [xmlString appendFormat:@"<D:locktoken><D:href>%@</D:href></D:locktoken>\n", token];
-		NSString* lockroot = [@"http://" stringByAppendingString:[[headers objectForKey:@"Host"] stringByAppendingString:[@"/" stringByAppendingString:resourcePath]]];
+		NSString* lockroot = [@"http://" stringByAppendingString:[headers[@"Host"] stringByAppendingString:[@"/" stringByAppendingString:resourcePath]]];
         [xmlString appendFormat:@"<D:lockroot><D:href>%@</D:href></D:lockroot>\n", lockroot];
         [xmlString appendString:@"</D:activelock>\n</D:lockdiscovery>\n"];
         [xmlString appendString:@"</D:prop>"];
         
-        [_headers setObject:@"application/xml; charset=\"utf-8\"" forKey:@"Content-Type"];
+        _headers[@"Content-Type"] = @"application/xml; charset=\"utf-8\"";
         _data = [xmlString dataUsingEncoding:NSUTF8StringEncoding];
         _status = 200;
         HTTPLogVerbose(@"Pretending to lock \"%@\"", resourcePath);
@@ -324,7 +324,7 @@ static xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name) {
         return nil;
       }
       
-      NSString* token = [headers objectForKey:@"Lock-Token"];
+      NSString* token = headers[@"Lock-Token"];
       _status = token ? 204 : 400;
       HTTPLogVerbose(@"Pretending to unlock \"%@\"", resourcePath);
     }

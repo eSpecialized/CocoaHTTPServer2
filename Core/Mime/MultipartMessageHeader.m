@@ -28,7 +28,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 @synthesize fields,encoding;
 
 
-- (id) initWithData:(NSData *)data formEncoding:(NSStringEncoding) formEncoding {
+- (instancetype) initWithData:(NSData *)data formEncoding:(NSStringEncoding) formEncoding {
 	if( nil == (self = [super init]) ) {
         return self;
     }
@@ -51,7 +51,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 			NSData* fieldData = [NSData dataWithBytesNoCopy:bytes length:offset freeWhenDone:NO];
 			MultipartMessageHeaderField* field = [[MultipartMessageHeaderField alloc] initWithData: fieldData  contentEncoding:formEncoding];
 			if( field ) {
-				[fields setObject:field forKey:field.name];
+				fields[field.name] = field;
 				HTTPLogVerbose(@"MultipartFormDataParser: Processed Header field '%@'",field.name);
 			}
 			else {
@@ -72,7 +72,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 		// it was an empty header.
 		// we have to set default values.
 		// default header.
-		[fields setObject:@"text/plain" forKey:@"Content-Type"];
+		fields[@"Content-Type"] = @"text/plain";
 	}
 
 	return self;

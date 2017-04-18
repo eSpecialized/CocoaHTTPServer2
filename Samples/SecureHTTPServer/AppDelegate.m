@@ -33,13 +33,13 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	
 	// We're going to extend the base HTTPConnection class with our MyHTTPConnection class.
 	// This allows us to customize the server for things such as SSL and password-protection.
-	[httpServer setConnectionClass:[MyHTTPConnection class]];
+	httpServer.connectionClass = [MyHTTPConnection class];
 	
 	// Serve files from the standard Sites folder
-	NSString *docRoot = [@"~/Sites" stringByExpandingTildeInPath];
+	NSString *docRoot = (@"~/Sites").stringByExpandingTildeInPath;
 	DDLogInfo(@"Setting document root: %@", docRoot);
 	
-	[httpServer setDocumentRoot:docRoot];
+	httpServer.documentRoot = docRoot;
 	
 	NSError *error = nil;
 	if(![httpServer start:&error])

@@ -405,33 +405,33 @@ static NSMutableArray *recentNonces;
 	// Extract the authentication information from the Authorization header
 	HTTPAuthenticationRequest *auth = [[HTTPAuthenticationRequest alloc] initWithRequest:request];
 	
-	if ([self useDigestAccessAuthentication])
+	if (self.useDigestAccessAuthentication)
 	{
 		// Digest Access Authentication (RFC 2617)
 		
-		if(![auth isDigest])
+		if(!auth.digest)
 		{
 			// User didn't send proper digest access authentication credentials
 			return NO;
 		}
 		
-		if ([auth username] == nil)
+		if (auth.username == nil)
 		{
 			// The client didn't provide a username
 			// Most likely they didn't provide any authentication at all
 			return NO;
 		}
 		
-		NSString *password = [self passwordForUser:[auth username]];
+		NSString *password = [self passwordForUser:auth.username];
 		if (password == nil)
 		{
 			// No access allowed (username doesn't exist in system)
 			return NO;
 		}
 		
-		NSString *url = [request url].relativeString;
+		NSString *url = request.url.relativeString;
 		
-		if (![url isEqualToString:[auth uri]])
+		if (![url isEqualToString:auth.uri])
 		{
 			// Requested URL and Authorization URI do not match
 			// This could be a replay attack
@@ -440,14 +440,14 @@ static NSMutableArray *recentNonces;
 		}
 		
 		// The nonce the client provided will most commonly be stored in our local (cached) nonce variable
-		if (![nonce isEqualToString:[auth nonce]])
+		if (![nonce isEqualToString:auth.nonce])
 		{
 			// The given nonce may be from another connection
 			// We need to search our list of recent nonce strings that have been recently distributed
-			if ([[self class] hasRecentNonce:[auth nonce]])
+			if ([[self class] hasRecentNonce:auth.nonce])
 			{
 				// Store nonce in local (cached) nonce variable to prevent array searches in the future
-				nonce = [[auth nonce] copy];
+				nonce = [auth.nonce copy];
 				
 				// The client has switched to using a different nonce value
 				// This may happen if the client tries to get a file in a directory with different credentials.
@@ -464,7 +464,7 @@ static NSMutableArray *recentNonces;
 			}
 		}
 		
-		long authNC = strtol([auth nc].UTF8String, NULL, 16);
+		long authNC = strtol(auth.nc.UTF8String, NULL, 16);
 		
 		if (authNC <= lastNC)
 		{
@@ -474,34 +474,34 @@ static NSMutableArray *recentNonces;
 		}
 		lastNC = authNC;
 		
-		NSString *HA1str = [NSString stringWithFormat:@"%@:%@:%@", [auth username], [auth realm], password];
-		NSString *HA2str = [NSString stringWithFormat:@"%@:%@", [request method], [auth uri]];
+		NSString *HA1str = [NSString stringWithFormat:@"%@:%@:%@", auth.username, auth.realm, password];
+		NSString *HA2str = [NSString stringWithFormat:@"%@:%@", request.method, auth.uri];
 		
-		NSString *HA1 = [[[HA1str dataUsingEncoding:NSUTF8StringEncoding] md5Digest] hexStringValue];
+		NSString *HA1 = [HA1str dataUsingEncoding:NSUTF8StringEncoding].md5Digest.hexStringValue;
 		
-		NSString *HA2 = [[[HA2str dataUsingEncoding:NSUTF8StringEncoding] md5Digest] hexStringValue];
+		NSString *HA2 = [HA2str dataUsingEncoding:NSUTF8StringEncoding].md5Digest.hexStringValue;
 		
 		NSString *responseStr = [NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",
-								 HA1, [auth nonce], [auth nc], [auth cnonce], [auth qop], HA2];
+								 HA1, auth.nonce, auth.nc, auth.cnonce, auth.qop, HA2];
 		
-		NSString *response = [[[responseStr dataUsingEncoding:NSUTF8StringEncoding] md5Digest] hexStringValue];
+		NSString *response = [responseStr dataUsingEncoding:NSUTF8StringEncoding].md5Digest.hexStringValue;
 		
-		return [response isEqualToString:[auth response]];
+		return [response isEqualToString:auth.response];
 	}
 	else
 	{
 		// Basic Authentication
 		
-		if (![auth isBasic])
+		if (!auth.basic)
 		{
 			// User didn't send proper base authentication credentials
 			return NO;
 		}
 		
 		// Decode the base 64 encoded credentials
-		NSString *base64Credentials = [auth base64Credentials];
+		NSString *base64Credentials = auth.base64Credentials;
 		
-		NSData *temp = [[base64Credentials dataUsingEncoding:NSUTF8StringEncoding] base64Decoded];
+		NSData *temp = [base64Credentials dataUsingEncoding:NSUTF8StringEncoding].base64Decoded;
 		
 		NSString *credentials = [[NSString alloc] initWithData:temp encoding:NSUTF8StringEncoding];
 		
@@ -538,7 +538,7 @@ static NSMutableArray *recentNonces;
 	HTTPLogTrace();
 	
 	NSString *authFormat = @"Digest realm=\"%@\", qop=\"auth\", nonce=\"%@\"";
-	NSString *authInfo = [NSString stringWithFormat:authFormat, [self realm], [[self class] generateNonce]];
+	NSString *authInfo = [NSString stringWithFormat:authFormat, self.realm, [[self class] generateNonce]];
 	
 	[response setHeaderField:@"WWW-Authenticate" value:authInfo];
 }
@@ -551,7 +551,7 @@ static NSMutableArray *recentNonces;
 	HTTPLogTrace();
 	
 	NSString *authFormat = @"Basic realm=\"%@\"";
-	NSString *authInfo = [NSString stringWithFormat:authFormat, [self realm]];
+	NSString *authInfo = [NSString stringWithFormat:authFormat, self.realm];
 	
 	[response setHeaderField:@"WWW-Authenticate" value:authInfo];
 }
@@ -601,12 +601,12 @@ static NSMutableArray *recentNonces;
 	
 	HTTPLogTrace();
 	
-	if ([self isSecureServer])
+	if (self.secureServer)
 	{
 		// We are configured to be an HTTPS server.
 		// That is, we secure via SSL/TLS the connection prior to any communication.
 		
-		NSArray *certificates = [self sslIdentityAndCertificates];
+		NSArray *certificates = self.sslIdentityAndCertificates;
 		
 		if (certificates.count > 0)
 		{
@@ -707,11 +707,11 @@ static NSMutableArray *recentNonces;
 **/ 
 - (NSDictionary *)parseGetParams 
 {
-	if(![request isHeaderComplete]) return nil;
+	if(!request.headerComplete) return nil;
 	
 	NSDictionary *result = nil;
 	
-	NSURL *url = [request url];
+	NSURL *url = request.url;
 	if(url)
 	{
 		NSString *query = url.query;
@@ -879,7 +879,7 @@ static NSMutableArray *recentNonces;
 {
 	if(request == nil) return nil;
 	
-	return [request url].relativeString;
+	return request.url.relativeString;
 }
 
 /**
@@ -892,7 +892,7 @@ static NSMutableArray *recentNonces;
 	
 	if (HTTP_LOG_VERBOSE)
 	{
-		NSData *tempData = [request messageData];
+		NSData *tempData = request.messageData;
 		
 		NSString *tempStr = [[NSString alloc] initWithData:tempData encoding:NSUTF8StringEncoding];
 		HTTPLogVerbose(@"%@[%p]: Received HTTP request:\n%@", THIS_FILE, self, tempStr);
@@ -901,7 +901,7 @@ static NSMutableArray *recentNonces;
 	// Check the HTTP version
 	// We only support version 1.0 and 1.1
 	
-	NSString *version = [request version];
+	NSString *version = request.version;
 	if (![version isEqualToString:HTTPVersion1_1] && ![version isEqualToString:HTTPVersion1_0])
 	{
 		[self handleVersionNotSupported:version];
@@ -909,7 +909,7 @@ static NSMutableArray *recentNonces;
 	}
 	
 	// Extract requested URI
-	NSString *uri = [self requestURI];
+	NSString *uri = self.requestURI;
 	
 	// Check for WebSocket request
 	if ([WebSocket isWebSocketRequest:request])
@@ -930,7 +930,7 @@ static NSMutableArray *recentNonces;
 			
 			// The WebSocket should now be the delegate of the underlying socket.
 			// But gracefully handle the situation if it forgot.
-			if ([asyncSocket delegate] == self)
+			if (asyncSocket.delegate == self)
 			{
 				HTTPLogWarn(@"%@[%p]: WebSocket forgot to set itself as socket delegate", THIS_FILE, self);
 				
@@ -981,7 +981,7 @@ static NSMutableArray *recentNonces;
 	}
 	
 	// Extract the method
-	NSString *method = [request method];
+	NSString *method = request.method;
 	
 	// Note: We already checked to ensure the method was supported in onSocket:didReadData:withTag:
 	
@@ -1121,7 +1121,7 @@ static NSMutableArray *recentNonces;
 {
 	if ([httpResponse respondsToSelector:@selector(delayResponseHeaders)])
 	{
-		if ([httpResponse delayResponseHeaders])
+		if (httpResponse.delayResponseHeaders)
 		{
 			return;
 		}
@@ -1131,7 +1131,7 @@ static NSMutableArray *recentNonces;
 	
 	if ([httpResponse respondsToSelector:@selector(isChunked)])
 	{
-		isChunked = [httpResponse isChunked];
+		isChunked = httpResponse.chunked;
 	}
 	
 	// If a response is "chunked", this simply means the HTTPResponse object
@@ -1141,7 +1141,7 @@ static NSMutableArray *recentNonces;
 	
 	if (!isChunked)
 	{
-		contentLength = [httpResponse contentLength];
+		contentLength = httpResponse.contentLength;
 	}
 	
 	// Check for specific range request
@@ -1171,7 +1171,7 @@ static NSMutableArray *recentNonces;
 		
 		if ([httpResponse respondsToSelector:@selector(status)])
 		{
-			status = [httpResponse status];
+			status = httpResponse.status;
 		}
 		response = [[HTTPMessage alloc] initResponseWithStatusCode:status description:nil version:HTTPVersion1_1];
 		
@@ -1202,7 +1202,7 @@ static NSMutableArray *recentNonces;
 	// If they issue a 'HEAD' command, we don't have to include the file
 	// If they issue a 'GET' command, we need to include the file
 	
-	if ([[request method] isEqualToString:@"HEAD"] || isZeroLengthResponse)
+	if ([request.method isEqualToString:@"HEAD"] || isZeroLengthResponse)
 	{
 		NSData *responseData = [self preprocessResponse:response];
 		[asyncSocket writeData:responseData withTimeout:TIMEOUT_WRITE_HEAD tag:HTTP_RESPONSE];
@@ -1234,7 +1234,7 @@ static NSMutableArray *recentNonces;
 					
 					[asyncSocket writeData:data withTimeout:TIMEOUT_WRITE_BODY tag:HTTP_CHUNKED_RESPONSE_BODY];
 					
-					if ([httpResponse isDone])
+					if (httpResponse.done)
 					{
 						NSData *footer = [self chunkedTransferFooter];
 						[asyncSocket writeData:footer withTimeout:TIMEOUT_WRITE_HEAD tag:HTTP_RESPONSE];
@@ -1247,7 +1247,7 @@ static NSMutableArray *recentNonces;
 				}
 				else
 				{
-					long tag = [httpResponse isDone] ? HTTP_RESPONSE : HTTP_PARTIAL_RESPONSE_BODY;
+					long tag = httpResponse.done ? HTTP_RESPONSE : HTTP_PARTIAL_RESPONSE_BODY;
 					[asyncSocket writeData:data withTimeout:TIMEOUT_WRITE_BODY tag:tag];
 				}
 			}
@@ -1261,7 +1261,7 @@ static NSMutableArray *recentNonces;
 				// Client is requesting a single range
 				DDRange range = [ranges[0] ddrangeValue];
 				
-				[httpResponse setOffset:range.location];
+				httpResponse.offset = range.location;
 				
 				NSUInteger bytesToRead = range.length < READ_CHUNKSIZE ? (NSUInteger)range.length : READ_CHUNKSIZE;
 				
@@ -1287,7 +1287,7 @@ static NSMutableArray *recentNonces;
 				// Start writing range body
 				DDRange range = [ranges[0] ddrangeValue];
 				
-				[httpResponse setOffset:range.location];
+				httpResponse.offset = range.location;
 				
 				NSUInteger bytesToRead = range.length < READ_CHUNKSIZE ? (NSUInteger)range.length : READ_CHUNKSIZE;
 				
@@ -1363,7 +1363,7 @@ static NSMutableArray *recentNonces;
 		
 		if ([httpResponse respondsToSelector:@selector(isChunked)])
 		{
-			isChunked = [httpResponse isChunked];
+			isChunked = httpResponse.chunked;
 		}
 		
 		if (isChunked)
@@ -1373,7 +1373,7 @@ static NSMutableArray *recentNonces;
 			
 			[asyncSocket writeData:data withTimeout:TIMEOUT_WRITE_BODY tag:HTTP_CHUNKED_RESPONSE_BODY];
 			
-			if([httpResponse isDone])
+			if(httpResponse.done)
 			{
 				NSData *footer = [self chunkedTransferFooter];
 				[asyncSocket writeData:footer withTimeout:TIMEOUT_WRITE_HEAD tag:HTTP_RESPONSE];
@@ -1386,7 +1386,7 @@ static NSMutableArray *recentNonces;
 		}
 		else
 		{
-			long tag = [httpResponse isDone] ? HTTP_RESPONSE : HTTP_PARTIAL_RESPONSE_BODY;
+			long tag = httpResponse.done ? HTTP_RESPONSE : HTTP_PARTIAL_RESPONSE_BODY;
 			[asyncSocket writeData:data withTimeout:TIMEOUT_WRITE_BODY tag:tag];
 		}
 	}
@@ -1422,7 +1422,7 @@ static NSMutableArray *recentNonces;
 	
 	DDRange range = [ranges[0] ddrangeValue];
 	
-	UInt64 offset = [httpResponse offset];
+	UInt64 offset = httpResponse.offset;
 	UInt64 bytesRead = offset - range.location;
 	UInt64 bytesLeft = range.length - bytesRead;
 	
@@ -1473,7 +1473,7 @@ static NSMutableArray *recentNonces;
 	
 	DDRange range = [ranges[rangeIndex] ddrangeValue];
 	
-	UInt64 offset = [httpResponse offset];
+	UInt64 offset = httpResponse.offset;
 	UInt64 bytesRead = offset - range.location;
 	UInt64 bytesLeft = range.length - bytesRead;
 	
@@ -1502,7 +1502,7 @@ static NSMutableArray *recentNonces;
 			// Start writing range body
 			range = [ranges[rangeIndex] ddrangeValue];
 			
-			[httpResponse setOffset:range.location];
+			httpResponse.offset = range.location;
 			
 			NSUInteger available = READ_CHUNKSIZE - writeQueueSize;
 			NSUInteger bytesToRead = range.length < available ? (NSUInteger)range.length : available;
@@ -1631,7 +1631,7 @@ static NSMutableArray *recentNonces;
 		BOOL isDir = NO;
 		if ([[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDir] && isDir)
 		{
-			NSArray *indexFileNames = [self directoryIndexFileNames];
+			NSArray *indexFileNames = self.directoryIndexFileNames;
 
 			for (NSString *indexFileName in indexFileNames)
 			{
@@ -1777,7 +1777,7 @@ static NSMutableArray *recentNonces;
 	HTTPMessage *response = [[HTTPMessage alloc] initResponseWithStatusCode:401 description:nil version:HTTPVersion1_1];
 	[response setHeaderField:@"Content-Length" value:@"0"];
 	
-	if ([self useDigestAccessAuthentication])
+	if (self.useDigestAccessAuthentication)
 	{
 		[self addDigestAuthChallenge:response];
 	}
@@ -1929,7 +1929,7 @@ static NSMutableArray *recentNonces;
 	// Add optional response headers
 	if ([httpResponse respondsToSelector:@selector(httpHeaders)])
 	{
-		NSDictionary *responseHeaders = [httpResponse httpHeaders];
+		NSDictionary *responseHeaders = httpResponse.httpHeaders;
 		
 		NSEnumerator *keyEnumerator = [responseHeaders keyEnumerator];
 		NSString *key;
@@ -1942,7 +1942,7 @@ static NSMutableArray *recentNonces;
 		}
 	}
 	
-	return [response messageData];
+	return response.messageData;
 }
 
 /**
@@ -1982,7 +1982,7 @@ static NSMutableArray *recentNonces;
 	// Add optional response headers
 	if ([httpResponse respondsToSelector:@selector(httpHeaders)])
 	{
-		NSDictionary *responseHeaders = [httpResponse httpHeaders];
+		NSDictionary *responseHeaders = httpResponse.httpHeaders;
 		
 		NSEnumerator *keyEnumerator = [responseHeaders keyEnumerator];
 		NSString *key;
@@ -1995,7 +1995,7 @@ static NSMutableArray *recentNonces;
 		}
 	}
 	
-	return [response messageData];
+	return response.messageData;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2018,7 +2018,7 @@ static NSMutableArray *recentNonces;
 			
 			[self handleInvalidRequest:data];
 		}
-		else if (![request isHeaderComplete])
+		else if (!request.headerComplete)
 		{
 			// We don't have a complete header yet
 			// That is, we haven't yet received a CRLF on a line by itself, indicating the end of the header
@@ -2044,10 +2044,10 @@ static NSMutableArray *recentNonces;
 			// We have an entire HTTP request header from the client
 			
 			// Extract the method (such as GET, HEAD, POST, etc)
-			NSString *method = [request method];
+			NSString *method = request.method;
 			
 			// Extract the uri (such as "/index.html")
-			NSString *uri = [self requestURI];
+			NSString *uri = self.requestURI;
 			
 			// Check for a Transfer-Encoding field
 			NSString *transferEncoding = [request headerField:@"Transfer-Encoding"];
@@ -2433,7 +2433,7 @@ static NSMutableArray *recentNonces;
 		}
 		else
 		{
-			if ([self shouldDie])
+			if (self.shouldDie)
 			{
 				// Cleanup after the last request
 				// Note: Don't do this before calling shouldDie, as it needs the request object still.
@@ -2598,7 +2598,7 @@ static NSMutableArray *recentNonces;
 	
 	BOOL shouldDie = NO;
 	
-	NSString *version = [request version];
+	NSString *version = request.version;
 	if ([version isEqualToString:HTTPVersion1_1])
 	{
 		// HTTP version 1.1

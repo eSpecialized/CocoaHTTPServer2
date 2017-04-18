@@ -21,7 +21,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	
 	// Tell the server to broadcast its presence via Bonjour.
 	// This allows browsers such as Safari to automatically discover our service.
-	[httpServer setType:@"_http._tcp."];
+	httpServer.type = @"_http._tcp.";
 	
 	// Normally there's no need to run our server on any specific port.
 	// Technologies like Bonjour allow clients to dynamically discover the server's port at runtime.
@@ -30,13 +30,13 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	
 	// We're going to extend the base HTTPConnection class with our MyHTTPConnection class.
 	// This allows us to do all kinds of customizations.
-	[httpServer setConnectionClass:[MyHTTPConnection class]];
+	httpServer.connectionClass = [MyHTTPConnection class];
 	
 	// Serve files from our embedded Web folder
-	NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
+	NSString *webPath = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"Web"];
 	DDLogInfo(@"Setting document root: %@", webPath);
 	
-	[httpServer setDocumentRoot:webPath];
+	httpServer.documentRoot = webPath;
 	
 	
 	NSError *error = nil;

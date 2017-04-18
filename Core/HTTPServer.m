@@ -236,7 +236,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	
 	dispatch_sync(serverQueue, ^{
 		if (isRunning)
-			result = [asyncSocket localPort];
+			result = asyncSocket.localPort;
 		else
 			result = 0;
 	});
@@ -575,7 +575,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_INFO; // | HTTP_LOG_FLAG_TRACE;
 	
 	if (type)
 	{
-		netService = [[NSNetService alloc] initWithDomain:domain type:type name:name port:[asyncSocket localPort]];
+		netService = [[NSNetService alloc] initWithDomain:domain type:type name:name port:asyncSocket.localPort];
 		netService.delegate = self;
 		
 		NSNetService *theNetService = netService;

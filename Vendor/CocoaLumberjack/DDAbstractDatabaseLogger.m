@@ -264,7 +264,7 @@
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -366,7 +366,7 @@
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -474,7 +474,7 @@
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -575,7 +575,7 @@
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -628,7 +628,7 @@
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -654,7 +654,7 @@
 		[self performSaveAndSuspendSaveTimer];
 	}};
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 		block();
 	else
 		dispatch_async(loggerQueue, block);
@@ -667,7 +667,7 @@
 		[self performDelete];
 	}};
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 		block();
 	else
 		dispatch_async(loggerQueue, block);

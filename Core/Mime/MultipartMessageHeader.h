@@ -29,5 +29,5 @@ enum {
 @property (strong,readonly) NSDictionary* fields;
 @property (readonly) int encoding;
 
-- (id) initWithData:(NSData*) data formEncoding:(NSStringEncoding) encoding;
+- (instancetype) initWithData:(NSData*) data formEncoding:(NSStringEncoding) encoding NS_DESIGNATED_INITIALIZER;
 @end

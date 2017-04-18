@@ -56,7 +56,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		
 		NSString *postStr = nil;
 		
-		NSData *postData = [request body];
+		NSData *postData = request.body;
 		if (postData)
 		{
 			postStr = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
@@ -66,7 +66,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		
 		// Result will be of the form "answer=..."
 		
-		int answer = [[postStr substringFromIndex:7] intValue];
+		int answer = [postStr substringFromIndex:7].intValue;
 		
 		NSData *response = nil;
 		if(answer == 10)

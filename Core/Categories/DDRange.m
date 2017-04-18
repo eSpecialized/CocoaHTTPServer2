@@ -95,8 +95,8 @@ NSInteger DDRangeCompare(DDRangePointer pDDRange1, DDRangePointer pDDRange2)
 
 - (NSInteger)ddrangeCompare:(NSValue *)other
 {
-	DDRange r1 = [self ddrangeValue];
-	DDRange r2 = [other ddrangeValue];
+	DDRange r1 = self.ddrangeValue;
+	DDRange r2 = other.ddrangeValue;
 	
 	return DDRangeCompare(&r1, &r2);
 }

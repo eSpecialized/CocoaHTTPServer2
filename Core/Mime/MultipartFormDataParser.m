@@ -47,7 +47,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 @implementation MultipartFormDataParser 
 @synthesize delegate,formEncoding;
 
-- (id) initWithBoundary:(NSString*) boundary formEncoding:(NSStringEncoding) _formEncoding {
+- (instancetype) initWithBoundary:(NSString*) boundary formEncoding:(NSStringEncoding) _formEncoding {
     if( nil == (self = [super init]) ){
         return self;
     }
@@ -462,7 +462,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 + (NSData*) decodedDataFromData:(NSData*) data encoding:(int) encoding {
 	switch (encoding) {
 		case contentTransferEncoding_base64: {
-			return [data base64Decoded]; 
+			return data.base64Decoded; 
 		} break;
 
 		case contentTransferEncoding_quotedPrintable: {

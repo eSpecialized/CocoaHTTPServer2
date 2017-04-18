@@ -33,7 +33,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		NSString *wsHost = [request headerField:@"Host"];
 		if (wsHost == nil)
 		{
-			NSString *port = [NSString stringWithFormat:@"%hu", [asyncSocket localPort]];
+			NSString *port = [NSString stringWithFormat:@"%hu", asyncSocket.localPort];
 			wsLocation = [NSString stringWithFormat:@"ws://localhost:%@/service", port];
 		}
 		else
@@ -41,7 +41,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 			wsLocation = [NSString stringWithFormat:@"ws://%@/service", wsHost];
 		}
 		
-		NSDictionary *replacementDict = [NSDictionary dictionaryWithObject:wsLocation forKey:@"WEBSOCKET_URL"];
+		NSDictionary *replacementDict = @{@"WEBSOCKET_URL": wsLocation};
 		
 		return [[HTTPDynamicFileResponse alloc] initWithFilePath:[self filePathForURI:path]
 		                                            forConnection:self

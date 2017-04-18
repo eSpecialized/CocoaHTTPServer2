@@ -958,7 +958,7 @@ static DDTTYLogger *sharedInstance;
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -993,7 +993,7 @@ static DDTTYLogger *sharedInstance;
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -1037,7 +1037,7 @@ static DDTTYLogger *sharedInstance;
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -1064,7 +1064,7 @@ static DDTTYLogger *sharedInstance;
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -1089,7 +1089,7 @@ static DDTTYLogger *sharedInstance;
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -1114,7 +1114,7 @@ static DDTTYLogger *sharedInstance;
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}
@@ -1140,7 +1140,7 @@ static DDTTYLogger *sharedInstance;
 	// The design of the setter logic below is taken from the DDAbstractLogger implementation.
 	// For documentation please refer to the DDAbstractLogger implementation.
 	
-	if ([self isOnInternalLoggerQueue])
+	if (self.onInternalLoggerQueue)
 	{
 		block();
 	}

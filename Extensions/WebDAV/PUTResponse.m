@@ -9,9 +9,9 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
 
 @implementation PUTResponse
 
-- (id) initWithFilePath:(NSString*)path headers:(NSDictionary*)headers body:(id)body {
+- (instancetype) initWithFilePath:(NSString*)path headers:(NSDictionary*)headers body:(id)body {
   if ((self = [super init])) {
-    if ([headers objectForKey:@"Content-Range"]) {
+    if (headers[@"Content-Range"]) {
       HTTPLogError(@"Content-Range not supported for upload to \"%@\"", path);
       _status = 400;
     } else {
@@ -34,11 +34,11 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;
   return self;
 }
 
-- (id) initWithFilePath:(NSString*)path headers:(NSDictionary*)headers bodyData:(NSData*)body {
+- (instancetype) initWithFilePath:(NSString*)path headers:(NSDictionary*)headers bodyData:(NSData*)body {
   return [self initWithFilePath:path headers:headers body:body];
 }
 
-- (id) initWithFilePath:(NSString*)path headers:(NSDictionary*)headers bodyFile:(NSString*)body {
+- (instancetype) initWithFilePath:(NSString*)path headers:(NSDictionary*)headers bodyFile:(NSString*)body {
   return [self initWithFilePath:path headers:headers body:body];
 }
 

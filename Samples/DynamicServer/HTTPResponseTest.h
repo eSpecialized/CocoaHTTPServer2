@@ -17,6 +17,6 @@
 	BOOL readyToSendResponseHeaders;
 }
 
-- (id)initWithConnection:(HTTPConnection *)connection;
+- (instancetype)initWithConnection:(HTTPConnection *)connection NS_DESIGNATED_INITIALIZER;
 
 @end

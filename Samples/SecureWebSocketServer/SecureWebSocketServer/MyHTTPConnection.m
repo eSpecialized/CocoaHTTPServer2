@@ -36,7 +36,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 	HTTPLogTrace();
 	
 	NSArray *result = [DDKeychain SSLIdentityAndCertificates];
-	if([result count] == 0)
+	if(result.count == 0)
 	{
         HTTPLogInfo(@"sslIdentityAndCertificates: Creating New Identity...");
 		[DDKeychain createNewIdentity];
@@ -62,12 +62,12 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		
 		NSString *wsLocation;
 		
-		NSString *scheme = [asyncSocket isSecure] ? @"wss" : @"ws";
+		NSString *scheme = asyncSocket.secure ? @"wss" : @"ws";
 		NSString *wsHost = [request headerField:@"Host"];
 		
 		if (wsHost == nil)
 		{
-			NSString *port = [NSString stringWithFormat:@"%hu", [asyncSocket localPort]];
+			NSString *port = [NSString stringWithFormat:@"%hu", asyncSocket.localPort];
 			wsLocation = [NSString stringWithFormat:@"%@://localhost:%@/service", scheme, port];
 		}
 		else
@@ -75,7 +75,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 			wsLocation = [NSString stringWithFormat:@"%@://%@/service", scheme, wsHost];
 		}
 		
-		NSDictionary *replacementDict = [NSDictionary dictionaryWithObject:wsLocation forKey:@"WEBSOCKET_URL"];
+		NSDictionary *replacementDict = @{@"WEBSOCKET_URL": wsLocation};
 		
 		return [[HTTPDynamicFileResponse alloc] initWithFilePath:[self filePathForURI:path]
 		                                            forConnection:self

@@ -834,7 +834,7 @@ enum GCDAsyncSocketConfig
 	BOOL found = NO;
 	
 	NSUInteger termLength = term.length;
-	NSUInteger preBufferLength = [preBuffer availableBytes];
+	NSUInteger preBufferLength = preBuffer.availableBytes;
 	
 	if ((bytesDone + preBufferLength) < termLength)
 	{
@@ -859,7 +859,7 @@ enum GCDAsyncSocketConfig
 	uint8_t *buf = (uint8_t *)buffer.mutableBytes + startOffset + bytesDone - bufLen;
 	
 	NSUInteger preLen = termLength - bufLen;
-	const uint8_t *pre = [preBuffer readBuffer];
+	const uint8_t *pre = preBuffer.readBuffer;
 	
 	NSUInteger loopCount = bufLen + maxPreBufferLength - termLength + 1; // Plus one. See example above.
 	
@@ -892,7 +892,7 @@ enum GCDAsyncSocketConfig
 			
 			if (memcmp(pre, termBuf, termLength) == 0)
 			{
-				NSUInteger preOffset = pre - [preBuffer readBuffer]; // pointer arithmetic
+				NSUInteger preOffset = pre - preBuffer.readBuffer; // pointer arithmetic
 				
 				result = preOffset + termLength;
 				found = YES;
@@ -1566,7 +1566,7 @@ enum GCDAsyncSocketConfig
 			return_from_block;
 		}
 		
-		if (![self isDisconnected]) // Must be disconnected
+		if (!self.disconnected) // Must be disconnected
 		{
 			NSString *msg = @"Attempting to accept while connected or accepting connections. Disconnect first.";
 			err = [self badConfigError:msg];
@@ -1891,7 +1891,7 @@ enum GCDAsyncSocketConfig
 		return NO;
 	}
 	
-	if (![self isDisconnected]) // Must be disconnected
+	if (!self.disconnected) // Must be disconnected
 	{
 		if (errPtr)
 		{
@@ -2481,7 +2481,7 @@ enum GCDAsyncSocketConfig
 	dispatch_block_t SetupStreamsPart1 = ^{
 		#if TARGET_OS_IPHONE
 		
-		if (![self createReadAndWriteStream])
+		if (!self.createReadAndWriteStream)
 		{
 			[self closeWithError:[self otherError:@"Error creating CFStreams"]];
 			return;
@@ -2504,13 +2504,13 @@ enum GCDAsyncSocketConfig
 			return;
 		}
 		
-		if (![self addStreamsToRunLoop])
+		if (!self.addStreamsToRunLoop)
 		{
 			[self closeWithError:[self otherError:@"Error in CFStreamScheduleWithRunLoop"]];
 			return;
 		}
 		
-		if (![self openStreams])
+		if (!self.openStreams)
 		{
 			[self closeWithError:[self otherError:@"Error creating CFStreams"]];
 			return;
@@ -2521,8 +2521,8 @@ enum GCDAsyncSocketConfig
 	
 	// Notify delegate
 	
-	NSString *host = [self connectedHost];
-	uint16_t port = [self connectedPort];
+	NSString *host = self.connectedHost;
+	uint16_t port = self.connectedPort;
 	
 	if (delegateQueue && [delegate respondsToSelector:@selector(socket:didConnectToHost:port:)])
 	{
@@ -2649,7 +2649,7 @@ enum GCDAsyncSocketConfig
 	LogTrace();
 	
 	[self endConnectTimeout];
-	[self closeWithError:[self connectTimeoutError]];
+	[self closeWithError:self.connectTimeoutError];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4066,7 +4066,7 @@ enum GCDAsyncSocketConfig
 			// 
 			// Be sure callbacks are enabled so we're notified about a disconnection.
 			
-			if ([preBuffer availableBytes] == 0)
+			if (preBuffer.availableBytes == 0)
 			{
 				if ([self usingCFStreamForTLS]) {
 					// Callbacks never disabled
@@ -4085,7 +4085,7 @@ enum GCDAsyncSocketConfig
 	
 	NSAssert((flags & kSocketSecure), @"Cannot flush ssl buffers on non-secure socket");
 	
-	if ([preBuffer availableBytes] > 0)
+	if (preBuffer.availableBytes > 0)
 	{
 		// Only flush the ssl buffers if the prebuffer is empty.
 		// This is to avoid growing the prebuffer inifinitely large.
@@ -4105,7 +4105,7 @@ enum GCDAsyncSocketConfig
 			
 			[preBuffer ensureCapacityForWrite:defaultBytesToRead];
 			
-			uint8_t *buffer = [preBuffer writeBuffer];
+			uint8_t *buffer = preBuffer.writeBuffer;
 			
 			CFIndex result = CFReadStreamRead(readStream, buffer, defaultBytesToRead);
 			LogVerbose(@"%@ - CFReadStreamRead(): result = %i", THIS_METHOD, (int)result);
@@ -4138,7 +4138,7 @@ enum GCDAsyncSocketConfig
 		// from the encrypted bytes in the sslPreBuffer.
 		// However, we do know this is an upper bound on the estimation.
 		
-		estimatedBytesAvailable = socketFDBytesAvailable + [sslPreBuffer availableBytes];
+		estimatedBytesAvailable = socketFDBytesAvailable + sslPreBuffer.availableBytes;
 		
 		size_t sslInternalBufSize = 0;
 		SSLGetBufferedReadSize(sslContext, &sslInternalBufSize);
@@ -4163,7 +4163,7 @@ enum GCDAsyncSocketConfig
 			
 			// Read data into prebuffer
 			
-			uint8_t *buffer = [preBuffer writeBuffer];
+			uint8_t *buffer = preBuffer.writeBuffer;
 			size_t bytesRead = 0;
 			
 			OSStatus result = SSLRead(sslContext, buffer, (size_t)estimatedBytesAvailable, &bytesRead);
@@ -4282,7 +4282,7 @@ enum GCDAsyncSocketConfig
 			// So our SSLReadFunction reads all available data from the socket (optimizing the sys call)
 			// and may store excess in the sslPreBuffer.
 			
-			estimatedBytesAvailable += [sslPreBuffer availableBytes];
+			estimatedBytesAvailable += sslPreBuffer.availableBytes;
 			
 			// The second buffer is within SecureTransport.
 			// As mentioned earlier, there are encrypted packets coming across the TCP stream.
@@ -4307,7 +4307,7 @@ enum GCDAsyncSocketConfig
 		
 	}
 	
-	if ((hasBytesAvailable == NO) && ([preBuffer availableBytes] == 0))
+	if ((hasBytesAvailable == NO) && (preBuffer.availableBytes == 0))
 	{
 		LogVerbose(@"No data available to read...");
 		
@@ -4368,7 +4368,7 @@ enum GCDAsyncSocketConfig
 	// STEP 1 - READ FROM PREBUFFER
 	// 
 	
-	if ([preBuffer availableBytes] > 0)
+	if (preBuffer.availableBytes > 0)
 	{
 		// There are 3 types of read packets:
 		// 
@@ -4388,7 +4388,7 @@ enum GCDAsyncSocketConfig
 		{
 			// Read type #1 or #2
 			
-			bytesToCopy = [currentRead readLengthForNonTermWithHint:[preBuffer availableBytes]];
+			bytesToCopy = [currentRead readLengthForNonTermWithHint:preBuffer.availableBytes];
 		}
 		
 		// Make sure we have enough room in the buffer for our read.
@@ -4519,7 +4519,7 @@ enum GCDAsyncSocketConfig
 		{
 			[preBuffer ensureCapacityForWrite:bytesToRead];
 						
-			buffer = [preBuffer writeBuffer];
+			buffer = preBuffer.writeBuffer;
 		}
 		else
 		{
@@ -4849,7 +4849,7 @@ enum GCDAsyncSocketConfig
 	{
 		[self completeCurrentRead];
 		
-		if (!error && (!socketEOF || [preBuffer availableBytes] > 0))
+		if (!error && (!socketEOF || preBuffer.availableBytes > 0))
 		{
 			[self maybeDequeueRead];
 		}
@@ -4938,7 +4938,7 @@ enum GCDAsyncSocketConfig
 		
 		shouldDisconnect = NO;
 	}
-	else if ([preBuffer availableBytes] > 0)
+	else if (preBuffer.availableBytes > 0)
 	{
 		LogVerbose(@"Socket reached EOF, but there is still data available in prebuffer");
 		
@@ -5912,7 +5912,7 @@ enum GCDAsyncSocketConfig
 {
 	LogVerbose(@"sslReadWithBuffer:%p length:%lu", buffer, (unsigned long)*bufferLength);
 	
-	if ((socketFDBytesAvailable == 0) && ([sslPreBuffer availableBytes] == 0))
+	if ((socketFDBytesAvailable == 0) && (sslPreBuffer.availableBytes == 0))
 	{
 		LogVerbose(@"%@ - No data available to read...", THIS_METHOD);
 		
@@ -5937,7 +5937,7 @@ enum GCDAsyncSocketConfig
 	// STEP 1 : READ FROM SSL PRE BUFFER
 	// 
 	
-	size_t sslPreBufferLength = [sslPreBuffer availableBytes];
+	size_t sslPreBufferLength = sslPreBuffer.availableBytes;
 	
 	if (sslPreBufferLength > 0)
 	{
@@ -5989,7 +5989,7 @@ enum GCDAsyncSocketConfig
 			
 			readIntoPreBuffer = YES;
 			bytesToRead = (size_t)socketFDBytesAvailable;
-			buf = [sslPreBuffer writeBuffer];
+			buf = sslPreBuffer.writeBuffer;
 		}
 		else
 		{
@@ -6508,7 +6508,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 	
 	sslPreBuffer = [[GCDAsyncSocketPreBuffer alloc] initWithCapacity:(1024 * 4)];
 	
-	size_t preBufferLength  = [preBuffer availableBytes];
+	size_t preBufferLength  = preBuffer.availableBytes;
 	
 	if (preBufferLength > 0)
 	{
@@ -6631,7 +6631,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 	
 	LogVerbose(@"Starting TLS (via CFStream)...");
 	
-	if ([preBuffer availableBytes] > 0)
+	if (preBuffer.availableBytes > 0)
 	{
 		NSString *msg = @"Invalid TLS transition. Handshake has already been read from socket.";
 		
@@ -6648,7 +6648,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 	
 	flags |=  kUsingCFStreamForTLS;
 	
-	if (![self createReadAndWriteStream])
+	if (!self.createReadAndWriteStream)
 	{
 		[self closeWithError:[self otherError:@"Error in CFStreamCreatePairWithSocket"]];
 		return;
@@ -6660,7 +6660,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 		return;
 	}
 	
-	if (![self addStreamsToRunLoop])
+	if (!self.addStreamsToRunLoop)
 	{
 		[self closeWithError:[self otherError:@"Error in CFStreamScheduleWithRunLoop"]];
 		return;
@@ -6703,7 +6703,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 		return;
 	}
 	
-	if (![self openStreams])
+	if (!self.openStreams)
 	{
 		[self closeWithError:[self otherError:@"Error in CFStreamOpen"]];
 		return;
@@ -6938,7 +6938,7 @@ static void CFWriteStreamCallback (CFWriteStreamRef stream, CFStreamEventType ty
 		return NO;
 	}
 	
-	if (![self isConnected])
+	if (!self.connected)
 	{
 		// Cannot create streams until file descriptor is connected
 		return NO;
@@ -7221,7 +7221,7 @@ static void CFWriteStreamCallback (CFWriteStreamRef stream, CFStreamEventType ty
 	}
 	
 	if (readStream == NULL)
-		[self createReadAndWriteStream];
+		self.createReadAndWriteStream;
 	
 	return readStream;
 }
@@ -7238,14 +7238,14 @@ static void CFWriteStreamCallback (CFWriteStreamRef stream, CFStreamEventType ty
 	}
 	
 	if (writeStream == NULL)
-		[self createReadAndWriteStream];
+		self.createReadAndWriteStream;
 	
 	return writeStream;
 }
 
 - (BOOL)enableBackgroundingOnSocketWithCaveat:(BOOL)caveat
 {
-	if (![self createReadAndWriteStream])
+	if (!self.createReadAndWriteStream)
 	{
 		// Error occured creating streams (perhaps socket isn't open)
 		return NO;
@@ -7265,7 +7265,7 @@ static void CFWriteStreamCallback (CFWriteStreamRef stream, CFStreamEventType ty
 	
 	if (!caveat)
 	{
-		if (![self openStreams])
+		if (!self.openStreams)
 		{
 			return NO;
 		}

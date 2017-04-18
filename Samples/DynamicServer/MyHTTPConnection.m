@@ -23,7 +23,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 	
 	// Convert to relative path
 	
-	NSString *documentRoot = [config documentRoot];
+	NSString *documentRoot = config.documentRoot;
 	
 	if (![filePath hasPrefix:documentRoot])
 	{
@@ -32,7 +32,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		return nil;
 	}
 	
-	NSString *relativePath = [filePath substringFromIndex:[documentRoot length]];
+	NSString *relativePath = [filePath substringFromIndex:documentRoot.length];
 	
 	if ([relativePath isEqualToString:@"/index.html"])
 	{
@@ -48,8 +48,8 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		// which takes a dictionary of replacement key-value pairs,
 		// and performs replacements on the fly as it uploads the file.
 		
-		NSString *computerName = [[NSHost currentHost] localizedName];
-		NSString *currentTime = [[NSDate date] description];
+		NSString *computerName = [NSHost currentHost].localizedName;
+		NSString *currentTime = [NSDate date].description;
 		
 		NSString *story = @"<br/><br/>"
 		                   "I'll tell you a story     <br/>" \
@@ -61,11 +61,11 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		
 		NSMutableDictionary *replacementDict = [NSMutableDictionary dictionaryWithCapacity:5];
 		
-		[replacementDict setObject:computerName forKey:@"COMPUTER_NAME"];
-		[replacementDict setObject:currentTime  forKey:@"TIME"];
-		[replacementDict setObject:story        forKey:@"STORY"];
-		[replacementDict setObject:@"A"         forKey:@"ALPHABET"];
-		[replacementDict setObject:@"  QUACK  " forKey:@"QUACK"];
+		replacementDict[@"COMPUTER_NAME"] = computerName;
+		replacementDict[@"TIME"] = currentTime;
+		replacementDict[@"STORY"] = story;
+		replacementDict[@"ALPHABET"] = @"A";
+		replacementDict[@"QUACK"] = @"  QUACK  ";
 		
 		HTTPLogVerbose(@"%@[%p]: replacementDict = \n%@", THIS_FILE, self, replacementDict);
 		

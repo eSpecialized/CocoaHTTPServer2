@@ -402,7 +402,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = iPhoneHTTPServer_Prefix.pch;
 				INFOPLIST_FILE = "iPhoneHTTPServer-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				PRODUCT_NAME = iPhoneHTTPServer;
 			};
 			name = Debug;
@@ -413,7 +413,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = iPhoneHTTPServer_Prefix.pch;
 				INFOPLIST_FILE = "iPhoneHTTPServer-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				PRODUCT_NAME = iPhoneHTTPServer;
 			};
 			name = Release;
@@ -422,7 +422,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DC372E49139D398400A8407D /* Debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
@@ -430,6 +430,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -438,7 +439,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DC372E4B139D398400A8407D /* Release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
@@ -446,6 +447,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				SDKROOT = iphoneos;
 			};
 			name = Release;

@@ -55,19 +55,39 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 		HTTPLogVerbose(@"%@[%p]: postContentLength: %qu", THIS_FILE, self, requestContentLength);
 		
 		NSString *postStr = nil;
-		
+        NSMutableDictionary *keyValue = [NSMutableDictionary new];
 		NSData *postData = request.body;
 		if (postData)
 		{
 			postStr = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
+            
+            //postData comes in with & ampersand separating the fields
+            NSArray *allRows = [postStr componentsSeparatedByString:@"&"];
+            
+            for (NSString *thisRow in allRows)
+            {
+                //each key/value pair is separated by an equals sign. easy to split it up.
+                NSArray *comps = [thisRow componentsSeparatedByString:@"="];
+                
+                if (comps.count == 2)
+                {
+                    NSString *theKey = comps[0];
+                    NSString *theValue = comps[1];
+                    keyValue[theKey] = theValue;
+                }
+            }
 		}
 		
 		HTTPLogVerbose(@"%@[%p]: postStr: %@", THIS_FILE, self, postStr);
 		
 		// Result will be of the form "answer=..."
 		
-		int answer = [postStr substringFromIndex:7].intValue;
-		
+        int answer = 0;
+        if (postStr && postStr.length > 7)
+        {
+            answer = [postStr substringFromIndex:7].intValue;
+        }
+        
 		NSData *response = nil;
 		if(answer == 10)
 		{

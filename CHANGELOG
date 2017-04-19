@@ -1,0 +1,12 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [2.4.3] - 2017-04-17
+ - Forked the original repository
+ - Updated all code and samples to latest Objective-C Syntax
+ - Fixed some bugs
+ - Added a Workspace to contain all the sample projects
+ - Todo: Lots of warnings of deprecated methods for iOS 10 and OSX 10.17

@@ -2,10 +2,13 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Samples/README.markdown">
+      location = "group:README.markdown">
    </FileRef>
    <FileRef
       location = "group:CocoaHTTPServer2.podspec.json">
+   </FileRef>
+   <FileRef
+      location = "group:CHANGELOG">
    </FileRef>
    <FileRef
       location = "group:Samples/WebDAVServer/WebDAVServer.xcodeproj">

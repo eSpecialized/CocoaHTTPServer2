@@ -1,5 +1,5 @@
 language: objective-c
 xcode_project: DynamiciPhoneHTTPServer 
 xcode_scheme: DynamiciPhoneHTTPServer
-xcode_sdk: iphonesimulator10.0
+xcode_sdk: iphonesimulator9.3
 

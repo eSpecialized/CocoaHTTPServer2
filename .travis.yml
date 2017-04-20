@@ -1,5 +1,6 @@
 language: objective-c
+xcode_image: xcode8.3
 xcode_project: Samples/DynamiciPhoneHTTPServer/DynamiciPhoneHTTPServer.xcodeproj 
 xcode_scheme: DynamiciPhoneHTTPServer
-xcode_sdk: iphonesimulator9.3
-script: xcodebuild -project Samples/DynamiciPhoneHTTPServer/DynamiciPhoneHTTPServer.xcodeproj -scheme DynamiciPhoneHTTPServer -sdk iphonesimulator9.3
+xcode_sdk: iphonesimulator10.1
+script: xcodebuild -project Samples/DynamiciPhoneHTTPServer/DynamiciPhoneHTTPServer.xcodeproj -scheme DynamiciPhoneHTTPServer -sdk iphonesimulator10.1
